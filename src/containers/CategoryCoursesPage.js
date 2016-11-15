@@ -3,32 +3,33 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/courseActions';
 
-import Spinning from 'spinning';
+//import Spinning from 'spinning';
 import CourseListItem from '../components/CourseListItem';
 
 class CategoryCoursesPage extends Component {
   componentDidMount() {
-    if (Object.keys(this.props.categories).length === 0) {
-      this.props.actions.fetchCategoryList();
-    }
-    if (this.props.courses.length === 0) {
-      this.props.actions.fetchCategoryCourseList(this.props.categoryName, this.props.categoryId);
-    }
+
   }
   render() {
-    // Re-renders whenever store is changed by dispatch and props are subsequently updated
     if (this.props.isFetching) {
-      CategoryCoursesPage.spinner = Spinning().text('loading...').light().size(150);
+      if (!this.props.categoryName) {  //  || this.props.categoryName !== this.props.categories[this.props.categoryId].name
+        this.props.actions.fetchCategoryCourseListFromId(this.props.categoryId);
+      }
       return null;
     } else {
-      if (CategoryCoursesPage.spinner) CategoryCoursesPage.spinner.remove();
       return (
         <main>
           <h2>{this.props.categoryName}</h2>
-          <a href="#" onClick={this.props.prev ? this.props.actions.fetchCategoryLink(this.props.prev, this.props.categoryName): null}>Previous</a>
-          {" | "}
-          <a href="#" onClick={this.props.next ? this.props.actions.fetchCategoryLink(this.props.next, this.props.categoryName) : null}>Next</a>
-          <ul id="category-course-list">
+          <div className="center-content">
+            <button disabled={!this.props.prev} onClick={this.props.actions.fetchCategoryCourseListFromURL.bind(this, this.props.prev, this.props.categoryId)}>
+              Previous
+            </button>
+            {" | "}
+            <button disabled={!this.props.next} onClick={this.props.actions.fetchCategoryCourseListFromURL.bind(this, this.props.next, this.props.categoryId)}>
+              Next
+            </button>
+          </div>
+          <ul className="top-list">
             {this.props.courses.map(({ title, author, linkhash }, index) =>
               <CourseListItem
                 key={index}
@@ -61,10 +62,10 @@ function mapStateToProps(state, ownProps) {
   return {
     categories: state.courses.categories,
     categoryId: ownProps.params.id,
-    categoryName: state.courses.categories[ownProps.params.id].name,
+    categoryName: state.courses.displayedCategory.name,
     courses: state.courses.displayedCategory.courses,
-    next: state.courses.next,
-    prev: state.courses.prev,
+    next: state.courses.displayedCategory.next,
+    prev: state.courses.displayedCategory.prev,
     isFetching: state.courses.isFetching
   };
 }

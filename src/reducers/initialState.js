@@ -3,7 +3,7 @@ export default {
     isFetching: false,
     categories: {},
     displayedCategory: {
-      name: 'Example',
+      name: '',
       next: null,
       prev: null,
       courses: []
@@ -11,8 +11,7 @@ export default {
     displayedCourse: {
       name: '',
       hash: '5fa03a5c8db7311b6c3e3235dc616ae0'
-    },
-    displayedCourseCache: {},
+    }
   },
   user: {
     savedCourses: []

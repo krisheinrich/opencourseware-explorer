@@ -1,5 +1,7 @@
-import * as types from '../constants/actionTypes';
+import { browserHistory } from 'react-router';
+import fetch from 'isomorphic-fetch';
 import fetchAPI from '../api/fetchAPI';
+import * as types from '../constants/actionTypes';
 
 /*
   Each asynchronous call involves the creation of 3 actions which affect state:
@@ -8,11 +10,17 @@ import fetchAPI from '../api/fetchAPI';
    - Action for error
 */
 
-/* Fetch list of course categories/subjects */
+// Shared by all async calls
 
-function getCategoryList() {
-  return { type: types.GET_CATEGORY_LIST };
+function asyncRequestInit() {
+  return { type: types.ASYNC_REQUEST_INIT };
 }
+
+function asyncRequestFail(error) {
+  return { type: types.ASYNC_REQUEST_FAIL, error };
+}
+
+// Fetch list of course categories/subjects
 
 function getCategoryListSuccess(categories) {
   return {
@@ -21,70 +29,56 @@ function getCategoryListSuccess(categories) {
   };
 }
 
-function getCategoryListFailure() {
-  return {
-    type: types.GET_CATEGORY_LIST_FAILURE,
-    error: "Could not retrieve category data from the OpenCourseWare API."
-  };
-}
-
-export function fetchCategoryList() {
+export function loadCategories() {
   return function (dispatch) {
 
-    dispatch(getCategoryList());
-
+    dispatch(asyncRequestInit());
     return fetchAPI('categories')
       .then(response => response.json())
       .then(json => dispatch(getCategoryListSuccess(json)))
-      .catch(() => dispatch(getCategoryListFailure()));
+      .catch(error => dispatch(asyncRequestFail(error)));
   };
 }
 
-/* Fetch paginated list of courses for a particular category/subject */
+// Fetch paginated list of courses for a particular category/subject
 
-function getCategoryCourseList() {
-  return {
-    type: types.GET_CATEGORY_COURSE_LIST,
-  };
-}
-
-function getCategoryCourseListSuccess(category, name) {
+function getCategoryCourseListSuccess(page, categoryId) {
   return {
     type: types.GET_CATEGORY_COURSE_LIST_SUCCESS,
-    name,
-    next: category.next,
-    prev: category.previous,
-    payload: category.results,
+    id: categoryId,
+    next: page.next,
+    prev: page.previous,
+    payload: page.results,
   };
 }
 
-function getCategoryCourseListFailure() {
-  return {
-    type: types.GET_CATEGORY_COURSE_LIST_FAILURE,
-    error: "Could not retrieve course data from the OpenCourseWare API."
-  };
-}
-
-export function fetchCategoryCourseList(categoryName, categoryId) {
+export function fetchCategoryCourseListFromId(categoryId) {
   return function (dispatch) {
 
-    dispatch(getCategoryCourseList());
-
+    dispatch(asyncRequestInit());
     return fetchAPI('categories/' + categoryId)
       .then(response => response.json())
-      .then(json => dispatch(getCategoryCourseListSuccess(json, categoryName)))
-      .catch(() => dispatch(getCategoryCourseListFailure()));
+      .then(json => {
+        dispatch(getCategoryCourseListSuccess(json, categoryId));
+      })
+      .then(() => browserHistory.push('/category/'+categoryId))
+      .catch(error => dispatch(asyncRequestFail(error)));
   };
 }
 
-/* Fetch list of courses for a particular course */
+// If we are passing a prev/next key for paginated course results
+export function fetchCategoryCourseListFromURL(url, categoryId) {
+  return function (dispatch) {
 
-function getCourseDetails(hash) {
-  return {
-    type: types.GET_COURSE_DETAILS,
-    hash
+    dispatch(asyncRequestInit());
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => dispatch(getCategoryCourseListSuccess(json, categoryId)))
+      .catch(error => dispatch(asyncRequestFail(error)));
   };
 }
+
+// Fetch list of courses for a particular course
 
 function getCourseDetailsSuccess(course) {
   return {
@@ -93,45 +87,21 @@ function getCourseDetailsSuccess(course) {
   };
 }
 
-function getCourseDetailsFailure() {
-  return {
-    type: types.GET_COURSE_DETAILS_FAILURE,
-    error: "Could not retrieve course data from the OpenCourseWare API."
-  };
-}
-
 export function fetchCourseDetails(hash) {
   return function (dispatch) {
-    // Signal start of async call
-    dispatch(getCourseDetails(hash));
 
+    dispatch(asyncRequestInit());
     return fetchAPI('courses/view/'+hash)
       .then(response => response.json())
       .then(json => dispatch(getCourseDetailsSuccess(json)))
-      .catch(() => dispatch(getCourseDetailsFailure()));
+      .catch(error => dispatch(asyncRequestFail(error)));
   };
 }
 
-// If we are passing a prev/next key for paginated course results
-
-export function fetchCategoryCourseListFromLink(url, categoryName) {
-  return function (dispatch) {
-
-    dispatch(getCategoryCourseList());
-
-    return fetch(url)
-      .then(response => response.json())
-      .then(json => dispatch(getCategoryCourseListSuccess(json, categoryName)))
-      .catch(() => dispatch(getCategoryCourseListFailure()));
-  };
-}
-
-
-/* Store hash ID of course on click */
-
-export function saveCourseSlug(hash) {
+// Toggle sub-category visibility
+export function toggleSubcategories(id) {
   return {
-    type: types.SAVE_COURSE_SLUG,
-    hash
+    type: types.TOGGLE_SUBCATEGORIES,
+    id
   };
 }

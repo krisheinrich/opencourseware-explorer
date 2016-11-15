@@ -3,36 +3,35 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/courseActions';
 
-import Spinning from 'spinning';
-import SubjectListItem from '../components/SubjectListItem';
+import Spinner from 'react-spinkit';
+import CategoryList from '../components/CategoryList';
 
 class CategoriesPage extends Component {
-  componentDidMount() {
-    // Call only once and cache to store
-    if (Object.keys(this.props.categories).length === 0) {
-      this.props.actions.fetchCategoryList();
-    }
+  handleLoadCourses() {
+    return (event, id) => {
+      event.preventDefault();
+      this.props.actions.fetchCategoryCourseListFromId(id);
+    };
   }
+
   render() {
-    // Re-renders whenever store is changed by dispatch and props are subsequently updated
-    if (this.props.isFetching) {
-      CategoriesPage.spinner = Spinning().text('loading...').light().size(150);
-      return null;
-    } else {
-      if (CategoriesPage.spinner) CategoriesPage.spinner.remove();
-      return (
-        <ul id="category-list">
-          {Object.keys(this.props.categories).map((id, index) =>
-            <SubjectListItem
-              key={index}
-              id={this.props.categories[id].category_id.toString()}
-              name={this.props.categories[id].name}
-              count={this.props.categories[id].course_count}
-            />
-          )}
-        </ul>
-      );
+    // Categories should be pre-loaded, but load if they aren't
+    if (Object.keys(this.props.categories).length === 0) {
+      if (this.props.isFetching) {
+        return <Spinner className="center-content" spinnerName="three-bounce" />;
+      } else {
+        this.props.actions.fetchCategoryList();
+        return null;
+      }
     }
+
+    return (
+      <CategoryList
+        categories={this.props.categories}
+        onCategoryClick={this.handleLoadCourses()}
+        onIconClick={this.props.actions.toggleSubcategories}
+      />
+    );
   }
 }
 

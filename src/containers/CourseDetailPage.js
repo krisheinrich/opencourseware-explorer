@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/courseActions';
 
-import Spinning from 'spinning';
+import Spinner from 'react-spinkit';
 
 class CourseDetailPage extends Component {
   componentDidMount() {
@@ -12,10 +12,8 @@ class CourseDetailPage extends Component {
   // Re-renders whenever store is changed by dispatch and props are subsequently updated
   render() {
     if (this.props.isFetching) {
-      CourseDetailPage.spinner = Spinning().text('loading...').light().size(150);
-      return null;
+      return <Spinner spinnerName="three-bounce" />;
     } else {
-      if (CourseDetailPage.spinner) CourseDetailPage.spinner.remove();
       /* eslint-disable react/no-danger */
       return (
         <main>
@@ -25,6 +23,7 @@ class CourseDetailPage extends Component {
           <p>{this.props.course.categories.join(", ")}</p>
         </main>
       );
+      /* eslint-enable react/no-danger */
     }
   }
 }

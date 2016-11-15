@@ -1,12 +1,12 @@
 // Set up your root reducer here...
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
-import courseReducer from './courseReducer';
-import userReducer from './userReducer';
+import courses from './courseReducer';
+import user from './userReducer';
 
 const rootReducer =  combineReducers({
-  courses: courseReducer,
-  user: userReducer,
+  courses,
+  user,
   routing: routerReducer
 });
 
