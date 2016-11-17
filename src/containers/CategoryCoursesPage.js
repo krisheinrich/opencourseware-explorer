@@ -3,45 +3,70 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/courseActions';
 
-//import Spinning from 'spinning';
+import { withRouter } from 'react-router';
+
+import Spinner from 'react-spinkit';
+import CoursePagination from '../components/CoursePagination';
 import CourseListItem from '../components/CourseListItem';
 
 class CategoryCoursesPage extends Component {
-  componentDidMount() {
-
+  constructor(props) {
+    super(props);
+    this.handlePaginationClick = this.handlePaginationClick.bind(this);
   }
+  componentDidMount() {
+    // Action to get course list hasn't been dispatched if user loads the page directly (vs via <Link />)
+    if (!this.props.count && !this.props.isFetching) {  // || Object.keys(this.props.categories).length === 0
+      this.props.actions.fetchCategoryCourseListFromId(this.props.categoryId);
+    }
+  }
+  componentWillReceiveProps() {
+    //debugger;
+    if (!this.props.count) {  // || Object.keys(this.props.categories).length === 0
+      this.props.actions.fetchCategoryCourseListFromId(this.props.categoryId);
+    }
+  }
+
+  handlePaginationClick(pageUrl) {
+    this.props.actions.fetchCategoryCourseListFromURL(pageUrl, this.props.categoryId);
+  }
+/*if (Object.keys(this.props.categories).length === 0) {
+  // wait for categories to load in store
+  return null;
+} else */
   render() {
-    if (this.props.isFetching) {
+    if (!this.props.count) {
+      // state.courses.displayedCategory not set (GET_CATEGORY_COURSE_LIST hasn't finished)
+      /*
       if (!this.props.categoryName) {  //  || this.props.categoryName !== this.props.categories[this.props.categoryId].name
         this.props.actions.fetchCategoryCourseListFromId(this.props.categoryId);
-      }
-      return null;
-    } else {
-      return (
-        <main>
-          <h2>{this.props.categoryName}</h2>
-          <div className="center-content">
-            <button disabled={!this.props.prev} onClick={this.props.actions.fetchCategoryCourseListFromURL.bind(this, this.props.prev, this.props.categoryId)}>
-              Previous
-            </button>
-            {" | "}
-            <button disabled={!this.props.next} onClick={this.props.actions.fetchCategoryCourseListFromURL.bind(this, this.props.next, this.props.categoryId)}>
-              Next
-            </button>
-          </div>
-          <ul className="top-list">
-            {this.props.courses.map(({ title, author, linkhash }, index) =>
+      } */
+      return <Spinner spinnerName="three-bounce" />;
+    }
+
+    return (
+      <main id="category-courses-page">
+        <h2>{this.props.categoryName}</h2>
+        <CoursePagination
+          prevUrl={this.props.prev}
+          nextUrl={this.props.next}
+          onPaginationClick={this.handlePaginationClick}
+        />
+        { this.props.count === 0
+        ? <p><em>No course data found.</em></p>
+        : <ul className="category-course-list">
+            {this.props.courses.map(({ title, author, linkhash }, index) => (
               <CourseListItem
                 key={index}
+                hash={linkhash}
                 name={title}
                 author={author}
-                hash={linkhash}
               />
-            )}
+            ))}
           </ul>
-        </main>
-      );
-    }
+        }
+      </main>
+    );
   }
 }
 
@@ -51,6 +76,7 @@ CategoryCoursesPage.propTypes = {
   categoryId: PropTypes.string.isRequired,
   categoryName: PropTypes.string.isRequired,
   courses: PropTypes.array.isRequired,
+  count: PropTypes.number.isRequired,
   next: PropTypes.string,
   prev: PropTypes.string,
   isFetching: PropTypes.bool.isRequired
@@ -64,6 +90,7 @@ function mapStateToProps(state, ownProps) {
     categoryId: ownProps.params.id,
     categoryName: state.courses.displayedCategory.name,
     courses: state.courses.displayedCategory.courses,
+    count: state.courses.displayedCategory.count,
     next: state.courses.displayedCategory.next,
     prev: state.courses.displayedCategory.prev,
     isFetching: state.courses.isFetching
@@ -76,7 +103,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(CategoryCoursesPage);
+)(CategoryCoursesPage));

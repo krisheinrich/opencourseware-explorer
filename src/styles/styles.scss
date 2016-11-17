@@ -3,11 +3,25 @@
 $blue: #5bb7db;
 $green: #60b044;
 $red: #ff0000;
+/*
+$fa-icon-list: (
+  ("arts", "\f1fc"),
+  ("business", "\f201"),
+  ("education", "\f19d"),
+  ("math", "\f1ec"),
+  ("science", "\f0c3"),
+  ("workforce", "")
+);
+*/
+
 
 /* Styles */
 
+// GLOBAL
+
 body {
-  background-color: #96b6d2;
+  z-index: -10;
+  background-color: #dcb;
   font: 14px 'Helvetica Neue', Ubuntu, Helvetica, Arial, sans-serif;
   line-height: 1.4em;
   color: #4d4d4d;
@@ -20,50 +34,207 @@ body {
   font-weight: 300;
 }
 
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+// Navigation
+
+ul#nav-list {
+  display: -webkit-flex;
+  display: flex;
+  margin-top: 2rem;
+}
+ul#nav-list li {
+  margin: 0;
+  a {
+    padding: 1rem 0.8rem;
+    &:hover {
+      background: #d4c3b2;
+    }
+    &.active {
+      color: #222;
+      font-weight: 500;
+      border-bottom: 3px solid lighten(brown, 20);
+    }
+  }
+}
+
+// Text
+
 h2 {
 	color: $blue;
+  text-align: center;
 }
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
-ul {
-  list-style: none;
-}
+// Loading Dots
 
-ul.top-list > li {
-  background-color: #eee;
-  margin: 25px;
-  padding: 1.2em 2em;
-  line-height: 1.4em;
-  font-size: 1.1rem;
-  box-shadow: 1px 3px 6px #aaafaa, -1px 3px 4px #aaafaa;
-  &:a:hover {
-    color: $green;
-  }
-}
-
-// center block-level element contents
-.center-content {
+div.three-bounce {
+  margin-top: 28vh;
   text-align: center;
 }
 
-// spinner
-div.three-bounce {
-  margin-top: 30vh;
-}
-
-// Font Awesome icon
-
+/* // Font Awesome icon
 i.fa-pull-left:before {
-  margin-right: 18px;
   line-height: 1.39em;;
+} */
+
+
+// CATEGORY LIST Page
+
+
+ul.category-list {
+  margin-top: 3em;
+  li {
+    background: #d1dbd1;
+    padding: 0;
+    a {
+      min-height: 65px;
+      display: block;
+      display: flex;
+      margin: 0;
+      padding: 0.5em 3em 0.5em 2.4em;
+      justify-content: space-between;
+      align-items: center;
+      &:hover {
+        background: #c1cbc1;
+        span.category-name {
+          font-weight: 500;
+        }
+        div.subcategories {
+          color: #222;
+        }
+      }
+      & > span {
+        flex-grow: 1;
+        margin: auto 10px;
+      }
+      span.category-name {
+        line-height: 1.4em;
+        font-size: 1.1rem;
+      }
+      div.subcategories {
+        color: inherit;
+        padding: 0;
+        width: 50%;
+        line-height: 1.2rem;
+        font-size: 0.8rem;
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+  }
 }
 
-// Category List Page
-ul.subcategory-list li {
-  margin: 4px;
-  padding: 0.3rem;
-  line-height: 0.9rem;
+// Toggle Subcategory list visibility
+/*
+.slider {
+  max-height: 0;
+  overflow-y: hidden;
+  -webkit-transition: max-height 0.8s;
+	-moz-transition: max-height 0.8s;
+	transition: max-height 0.8s;
+}
+
+.slider.open {
+  max-height: 200px;
+}
+*/
+
+
+// CATEGORY COURSES LIST Page
+
+// Paginated buttons
+
+div.pagination {
+  width: 220px;
+  margin: 0 auto;
+  padding-bottom: 2em;
+  display: flex;
+  justify-content: space-around;
+  button {
+    cursor: pointer;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 25%;
+    &:focus {
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+  }
+}
+
+// Course list
+
+ul.category-course-list li {
+  background: #e8e8e8;
+  padding: 1.1rem 2.6rem;
+  line-height: 21px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  a {
+    font-size: 17px;
+    font-family: Helvetica;
+    font-weight: 600;
+  }
+  i {
+    color: rgba(60,60,60,0.2);
+    font-size: 22px;
+    position: absolute;
+    left: 14px;
+    top: 19px;
+  }
+  &:hover i {
+    color: rgba(64,64,64,0.8);
+  }
+}
+
+// COURSE DETAILS PAGE
+
+main#course-details-page {
+  position: relative;
+  background: #f6f6f6;
+  border: 3px solid #776;
+  border-radius: 4px;
+  padding: 1.1rem 3.2rem;
+}
+
+.course-detail-label {
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.glyph-anchor {
+  float: right;
+  margin: 1.1rem 0 0 0.2rem;
+  /*
+  position: absolute;
+  right: 3rem;
+  top: 2.5rem;
+  */
+  color: #444;
+  display: inline-block;
+}
+
+.glyph-anchor:before {
+  font-family: FontAwesome;
+  content: "\f14c";
+  vertical-align: middle;
+  font-size: 23px;
+}
+
+.glyph-anchor:after {
+  font-family: FontAwesome;
+  content: "\f006";
+  display: inline-block;
+  margin-left: 22px;
+  vertical-align: middle;
+  font-size: 30px;
 }

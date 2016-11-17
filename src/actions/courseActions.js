@@ -1,6 +1,5 @@
-import { browserHistory } from 'react-router';
 import fetch from 'isomorphic-fetch';
-import fetchAPI from '../api/fetchAPI';
+import fetchAPI, { checkStatus, getJSON } from '../api/fetchAPI';
 import * as types from '../constants/actionTypes';
 
 /*
@@ -10,17 +9,11 @@ import * as types from '../constants/actionTypes';
    - Action for error
 */
 
-// Shared by all async calls
-
-function asyncRequestInit() {
-  return { type: types.ASYNC_REQUEST_INIT };
-}
-
-function asyncRequestFail(error) {
-  return { type: types.ASYNC_REQUEST_FAIL, error };
-}
-
 // Fetch list of course categories/subjects
+
+function requestCategoryList() {
+  return { type: types.GET_CATEGORY_LIST_REQUEST };
+}
 
 function getCategoryListSuccess(categories) {
   return {
@@ -29,56 +22,89 @@ function getCategoryListSuccess(categories) {
   };
 }
 
+function getCategoryListError(error) {
+  return {
+    type: types.GET_CATEGORY_LIST_ERROR,
+    error
+  };
+}
+
 export function loadCategories() {
   return function (dispatch) {
-
-    dispatch(asyncRequestInit());
+    dispatch(requestCategoryList());
     return fetchAPI('categories')
-      .then(response => response.json())
+      .then(checkStatus)
+      .then(getJSON)
       .then(json => dispatch(getCategoryListSuccess(json)))
-      .catch(error => dispatch(asyncRequestFail(error)));
+      .catch(error => dispatch(getCategoryListError(error)));
   };
 }
 
 // Fetch paginated list of courses for a particular category/subject
 
+function requestCategoryCourseList() {
+  return { type: types.GET_CATEGORY_COURSE_LIST_REQUEST };
+}
+
 function getCategoryCourseListSuccess(page, categoryId) {
+  // Filter results by language
+  const languageFilter = "English";
+
   return {
     type: types.GET_CATEGORY_COURSE_LIST_SUCCESS,
     id: categoryId,
+    count: page.count,
     next: page.next,
     prev: page.previous,
-    payload: page.results,
+    // Want to filter in API request (paginated lists in UI will not be same length otherwise)
+    payload: page.results.filter(course => course.language.indexOf(languageFilter) > -1)
   };
 }
 
-export function fetchCategoryCourseListFromId(categoryId) {
-  return function (dispatch) {
+function getCategoryCourseListError(error) {
+  return {
+    type: types.GET_CATEGORY_COURSE_LIST_ERROR,
+    error
+  };
+}
 
-    dispatch(asyncRequestInit());
+// If fetching initial page of course results
+export function fetchCategoryCourseListFromId(categoryId) {
+  return function (dispatch, getState) {
+    if (getState().courses.isFetching) {
+      return Promise.resolve();
+    }
+
+    dispatch(requestCategoryCourseList());
+
     return fetchAPI('categories/' + categoryId)
-      .then(response => response.json())
+      .then(checkStatus)
+      .then(getJSON)
       .then(json => {
         dispatch(getCategoryCourseListSuccess(json, categoryId));
       })
-      .then(() => browserHistory.push('/category/'+categoryId))
-      .catch(error => dispatch(asyncRequestFail(error)));
+      .catch(error => dispatch(getCategoryCourseListError(error)));
   };
 }
 
-// If we are passing a prev/next key for paginated course results
+// If passing a prev/next key for paginated course results
 export function fetchCategoryCourseListFromURL(url, categoryId) {
   return function (dispatch) {
 
-    dispatch(asyncRequestInit());
+    dispatch(requestCategoryCourseList());
     return fetch(url)
-      .then(response => response.json())
+      .then(checkStatus)
+      .then(getJSON)
       .then(json => dispatch(getCategoryCourseListSuccess(json, categoryId)))
-      .catch(error => dispatch(asyncRequestFail(error)));
+      .catch(error => dispatch(getCategoryCourseListError(error)));
   };
 }
 
-// Fetch list of courses for a particular course
+// Fetch more detailed data for a particular course
+
+function requestCourseDetails() {
+  return { type: types.GET_COURSE_DETAILS_REQUEST };
+}
 
 function getCourseDetailsSuccess(course) {
   return {
@@ -87,21 +113,21 @@ function getCourseDetailsSuccess(course) {
   };
 }
 
-export function fetchCourseDetails(hash) {
-  return function (dispatch) {
-
-    dispatch(asyncRequestInit());
-    return fetchAPI('courses/view/'+hash)
-      .then(response => response.json())
-      .then(json => dispatch(getCourseDetailsSuccess(json)))
-      .catch(error => dispatch(asyncRequestFail(error)));
+function getCourseDetailsError(error) {
+  return {
+    type: types.GET_COURSE_DETAILS_ERROR,
+    error
   };
 }
 
-// Toggle sub-category visibility
-export function toggleSubcategories(id) {
-  return {
-    type: types.TOGGLE_SUBCATEGORIES,
-    id
+export function fetchCourseDetails(hash) {
+  return function (dispatch) {
+
+    dispatch(requestCourseDetails());
+    return fetchAPI('courses/view/'+hash)
+      .then(checkStatus)
+      .then(getJSON)
+      .then(json => dispatch(getCourseDetailsSuccess(json)))
+      .catch(error => dispatch(getCourseDetailsError(error)));
   };
 }

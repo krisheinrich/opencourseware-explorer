@@ -1,6 +1,6 @@
 /* eslint-disable import/default */
 
-import React from 'react';
+import React, { PropTypes } from 'react';
 import {render} from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
@@ -25,3 +25,7 @@ render(
     <Router history={history} routes={routes} />
   </Provider>, document.getElementById('app')
 );
+
+Provider.childContextTypes = {
+  store: PropTypes.object
+};

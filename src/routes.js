@@ -6,6 +6,7 @@ import HomePage from './components/HomePage';
 import CategoriesPage from './containers/CategoriesPage';
 import CategoryCoursesPage from './containers/CategoryCoursesPage';
 import CourseDetailPage from './containers/CourseDetailPage';
+import SavedCoursesPage from './containers/SavedCoursesPage';
 import NotFoundPage from './components/NotFoundPage';
 
 export default (
@@ -14,6 +15,7 @@ export default (
     <Route path="categories" component={CategoriesPage}/>
     <Route path="category/:id" component={CategoryCoursesPage}/>
     <Route path="course/:id" component={CourseDetailPage}/>
+    <Route path="saved" component={SavedCoursesPage}/>
     <Route path="*" component={NotFoundPage}/>
   </Route>
 );

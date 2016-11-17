@@ -9,18 +9,36 @@ class CourseDetailPage extends Component {
   componentDidMount() {
     this.props.actions.fetchCourseDetails(this.props.hash);
   }
+  /*
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.hash !== this.props.hash) {
+      this.props.actions.fetchCourseDetails(this.props.hash);
+    }
+  }
+  */
   // Re-renders whenever store is changed by dispatch and props are subsequently updated
   render() {
-    if (this.props.isFetching) {
+    const { store } = this.context;
+
+    if (this.props.isFetching || !store.getState().courses.displayedCourse.name) {
       return <Spinner spinnerName="three-bounce" />;
     } else {
       /* eslint-disable react/no-danger */
       return (
-        <main>
-          <h2><a href={this.props.course.url}>{this.props.course.name}</a></h2>
+        <main id="course-details-page">
+          <span className="glyph-anchor" />
+          <h2>
+            <a className="course-title" href={this.props.course.url}>{this.props.course.name}</a>
+          </h2>
           <h3>{this.props.course.author}</h3>
-          <p dangerouslySetInnerHTML={{__html: this.props.course.description}}/>
-          <p>{this.props.course.categories.join(", ")}</p>
+          <div id="course-details">
+            <span className="course-detail-label">Course Description:</span>
+            <p dangerouslySetInnerHTML={{__html: this.props.course.description}}/>
+            { this.props.course.provider &&
+              <p><span className="course-detail-label">Provider:</span> {this.props.course.provider}</p>
+            }
+            <p><span className="course-detail-label">Tags:</span> {this.props.course.categories.slice(1).join(", ")}</p>
+          </div>
         </main>
       );
       /* eslint-enable react/no-danger */
@@ -33,6 +51,10 @@ CourseDetailPage.propTypes = {
   course: PropTypes.object.isRequired,
   hash: PropTypes.string.isRequired,
   isFetching: PropTypes.bool.isRequired
+};
+
+CourseDetailPage.contextTypes = {
+  store: PropTypes.object.isRequired
 };
 
 // Subscribe component to Redux store updates

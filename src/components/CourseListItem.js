@@ -1,15 +1,14 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-const CourseListItem = ({ hash, name, author }) => {
-  return (
-    <li>
-      <Link to={'/course/'+hash}>{name}</Link>
-      <br/>
-      {author}
-    </li>
-  );
-};
+const CourseListItem = ({ hash, name, author }) => (
+  <li>
+    <i className="fa fa-bookmark-o"/>
+    <Link to={'/course/'+hash} dangerouslySetInnerHTML={{__html: name}} />
+    <br />
+    {author}
+  </li>
+);
 
 CourseListItem.propTypes = {
   name: PropTypes.string.isRequired,
