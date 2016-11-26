@@ -4,8 +4,8 @@ import NumberFormatter from '../utils/numberFormatter';
 
 // For each category, render an <li> that can toggle to show its subcategories
 
-const CategoryList = ({categories, onCategoryClick}) => {
-  return (<ul className="category-list">
+const CategoryList = ({categories, onCategoryClick}) => (
+  <ul className="category-list">
     {
       Object.keys(categories).map((id, index) =>
         <li key={index}>
@@ -25,8 +25,8 @@ const CategoryList = ({categories, onCategoryClick}) => {
         </li>
       )
     }
-  </ul>);
-};
+  </ul>
+);
 
 CategoryList.propTypes = {
   categories: PropTypes.object.isRequired,

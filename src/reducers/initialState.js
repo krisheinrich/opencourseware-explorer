@@ -1,6 +1,7 @@
 export default {
   courses: {
     isFetching: false,
+    byHash: {},
     categories: {
       "2175": {
         children: [

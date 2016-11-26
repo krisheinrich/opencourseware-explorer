@@ -131,3 +131,10 @@ export function fetchCourseDetails(hash) {
       .catch(error => dispatch(getCourseDetailsError(error)));
   };
 }
+
+export function toggleSavedCourse(id) {
+  return {
+    type: types.TOGGLE_SAVED_COURSE,
+    id
+  };
+}

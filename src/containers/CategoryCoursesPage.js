@@ -13,6 +13,7 @@ class CategoryCoursesPage extends Component {
   constructor(props) {
     super(props);
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
+    this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
   }
   componentDidMount() {
     // Action to get course list hasn't been dispatched if user loads the page directly (vs via <Link />)
@@ -21,15 +22,24 @@ class CategoryCoursesPage extends Component {
     }
   }
   componentWillReceiveProps() {
-    //debugger;
     if (!this.props.count) {  // || Object.keys(this.props.categories).length === 0
       this.props.actions.fetchCategoryCourseListFromId(this.props.categoryId);
     }
+  }
+  determineIfSaved(hash) {
+    return this.props.savedCourses.indexOf(hash) > -1;
+  }
+
+  handleSaveCourseId(hash) {
+    return () => {
+      this.props.actions.toggleSavedCourse(hash);
+    };
   }
 
   handlePaginationClick(pageUrl) {
     this.props.actions.fetchCategoryCourseListFromURL(pageUrl, this.props.categoryId);
   }
+
 /*if (Object.keys(this.props.categories).length === 0) {
   // wait for categories to load in store
   return null;
@@ -61,6 +71,8 @@ class CategoryCoursesPage extends Component {
                 hash={linkhash}
                 name={title}
                 author={author}
+                isSaved={this.determineIfSaved(linkhash)}
+                saveCourseId={this.handleSaveCourseId}
               />
             ))}
           </ul>
@@ -93,7 +105,8 @@ function mapStateToProps(state, ownProps) {
     count: state.courses.displayedCategory.count,
     next: state.courses.displayedCategory.next,
     prev: state.courses.displayedCategory.prev,
-    isFetching: state.courses.isFetching
+    isFetching: state.courses.isFetching,
+    savedCourses: state.user.savedCourses
   };
 }
 

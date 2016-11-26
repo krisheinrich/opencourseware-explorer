@@ -77,6 +77,17 @@ export default function courseReducer(state = initialState.courses, action) {
        **/
       return objectAssign({}, state, {
         isFetching: false,
+        byHash: {
+          ...state.byHash,
+          ...action.payload.reduce((cache, course) => {
+            cache[course.linkhash] = {
+              id: course.id,
+              name: course.title,
+              author: course.author
+            };
+            return cache;
+          }, {})
+        },
         displayedCategory: {
           name: state.categories[action.id].name,
           count: action.count,

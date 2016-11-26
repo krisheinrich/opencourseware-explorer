@@ -173,7 +173,7 @@ div.pagination {
 
 // Course list
 
-ul.category-course-list li {
+ul.category-course-list li, ul.mySavedCourses li {
   background: #e8e8e8;
   padding: 1.1rem 2.6rem;
   line-height: 21px;
@@ -190,6 +190,9 @@ ul.category-course-list li {
     position: absolute;
     left: 14px;
     top: 19px;
+  }
+  i.fa-bookmark {
+    color: rgba(60,60,60,0.8);
   }
   &:hover i {
     color: rgba(64,64,64,0.8);

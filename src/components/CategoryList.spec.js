@@ -8,9 +8,13 @@ import * as actions from '../actions/courseActions';
 function setup() {
   const props = {
     categories: {
-      '2214': {
+      '2513': {
         name: 'Math & Science',
-        count: 1312482
+        count: 1312482,
+        children: [
+          "Algebra", "Number Theory", "Statistics & Probability", "Calculus", "Differential Equations",
+          "Linear Algebra", "Combinatorics", "Graph Theory", "Algorithms", "Applied Math", "Machine Learning"
+        ]
       }
     },
     onCategoryClick: (event, id) => {
@@ -26,6 +30,6 @@ const wrapper = setup();
 
 describe("<CategoryList />", function () {
   it('displays a <Link /> with the category name and properly formatted course count', function () {
-    expect(wrapper.find('Link').render().text()).to.equal('Math & Science (1,312,482)');
+    expect(wrapper.find('Link').find('.category-name').render().text()).to.equal('Math & Science (1,312,482)');
   });
 });
