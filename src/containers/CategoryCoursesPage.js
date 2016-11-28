@@ -56,7 +56,7 @@ class CategoryCoursesPage extends Component {
 
     return (
       <main id="category-courses-page">
-        <h2>{this.props.categoryName}</h2>
+        <h1>{this.props.categoryName}</h1>
         <CoursePagination
           prevUrl={this.props.prev}
           nextUrl={this.props.next}
@@ -91,7 +91,8 @@ CategoryCoursesPage.propTypes = {
   count: PropTypes.number.isRequired,
   next: PropTypes.string,
   prev: PropTypes.string,
-  isFetching: PropTypes.bool.isRequired
+  isFetching: PropTypes.bool.isRequired,
+  savedCourses: PropTypes.array.isRequired
 };
 
 // Subscribe component to Redux store updates

@@ -16,7 +16,7 @@ class App extends React.Component {
           </ul>
         </nav>
         <br/>
-      { Object.keys(store.getState().courses.categories).length === 0
+        { Object.keys(store.getState().courses.categories).length === 0
           ? <Spinner className="center-content" spinnerName="three-bounce" />
           : this.props.children
         }
