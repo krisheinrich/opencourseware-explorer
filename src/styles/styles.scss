@@ -68,14 +68,35 @@ div.three-bounce {
   text-align: center;
 }
 
-/* // Font Awesome icon
-i.fa-pull-left:before {
-  line-height: 1.39em;;
-} */
+// Course lists
 
+ul.search-results-list li, ul.category-course-list li, ul.mySavedCourses li {
+  background: #e8e8e8;
+  padding: 1.1rem 2.6rem;
+  line-height: 21px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  a {
+    font-size: 17px;
+    font-family: Helvetica;
+    font-weight: 600;
+  }
+  i {
+    color: rgba(60,60,60,0.2);
+    font-size: 22px;
+    position: absolute;
+    left: 14px;
+    top: 19px;
+  }
+  i.fa-bookmark {
+    color: rgba(60,60,60,0.8);
+  }
+  &:hover i {
+    color: rgba(64,64,64,0.8);
+  }
+}
 
 // CATEGORY LIST Page
-
 
 ul.category-list {
   margin-top: 3em;
@@ -156,34 +177,6 @@ div.pagination {
       -webkit-box-shadow: none;
       box-shadow: none;
     }
-  }
-}
-
-// Course list
-
-ul.category-course-list li, ul.mySavedCourses li {
-  background: #e8e8e8;
-  padding: 1.1rem 2.6rem;
-  line-height: 21px;
-  border-bottom: 1px solid #ccc;
-  position: relative;
-  a {
-    font-size: 17px;
-    font-family: Helvetica;
-    font-weight: 600;
-  }
-  i {
-    color: rgba(60,60,60,0.2);
-    font-size: 22px;
-    position: absolute;
-    left: 14px;
-    top: 19px;
-  }
-  i.fa-bookmark {
-    color: rgba(60,60,60,0.8);
-  }
-  &:hover i {
-    color: rgba(64,64,64,0.8);
   }
 }
 

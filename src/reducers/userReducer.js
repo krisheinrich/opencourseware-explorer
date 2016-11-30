@@ -1,11 +1,12 @@
 import { TOGGLE_SAVED_COURSE } from '../constants/actionTypes';
-import objectAssign from 'object-assign';
 import initialState from './initialState';
 
 export default function userReducer(state = initialState.user, action) {
+
+  const { savedCourses } = state;
+
   switch (action.type) {
     case TOGGLE_SAVED_COURSE:
-      const { savedCourses } = state;
       // add new course ID
       if (savedCourses.indexOf(action.id) === -1) {
         return {

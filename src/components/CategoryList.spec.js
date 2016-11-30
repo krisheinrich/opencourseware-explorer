@@ -19,7 +19,7 @@ function setup() {
     },
     onCategoryClick: (event, id) => {
       event.preventDefault();
-      actions.fetchCategoryCourseListFromId(id);
+      actions.fetchCategoryCourseList(id);
     }
   };
 

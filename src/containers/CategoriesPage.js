@@ -1,20 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import { browserHistory } from 'react-router';
+//import { browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from '../actions/courseActions';
 
 import Spinner from 'react-spinkit';
 import CategoryList from '../components/CategoryList';
 
 class CategoriesPage extends Component {
-  handleLoadCourses() {
-    return (event, id) => {
-      event.preventDefault();
-      //this.props.actions.fetchCategoryCourseListFromId(id).then(() => ... )
-      browserHistory.push('/category/' + id);
-    };
-  }
+  /*
+  static handleLoadCourses = (event, id) => {
+    event.preventDefault();
+    browserHistory.push('/category/' + id);
+  };
+  */
 
   render() {
     return (this.props.isFetching)
@@ -23,14 +20,13 @@ class CategoriesPage extends Component {
         <h1>Browse Courses By Category</h1>
         <CategoryList
           categories={this.props.categories}
-          onCategoryClick={this.handleLoadCourses()}
+          //onCategoryClick={this.handleLoadCourses}
         />
-      </main>
+      </main>;
   }
 }
 
 CategoriesPage.propTypes = {
-  actions: PropTypes.object.isRequired,
   categories: PropTypes.object.isRequired,
   isFetching: PropTypes.bool.isRequired
 };
@@ -39,18 +35,11 @@ CategoriesPage.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    categories: state.courses.categories,
-    isFetching: state.courses.isFetching
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions, dispatch)
+    categories: state.categories.byId,
+    isFetching: state.categories.isFetching
   };
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )(CategoriesPage);

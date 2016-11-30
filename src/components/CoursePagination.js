@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
 
-const CoursePagination = ({prevUrl, nextUrl, onPaginationClick}) => (
+const CoursePagination = ({currentPage, totalPages, onPaginationClick}) => (
   <div className="pagination">
-    <button disabled={!prevUrl} onClick={() => {onPaginationClick(prevUrl);}}>
+    <button disabled={currentPage===1} onClick={() => {onPaginationClick(currentPage-1);}}>
       <i className="fa fa-angle-left fa-2x"/>
     </button>
-    <button disabled={!nextUrl} onClick={() => {onPaginationClick(nextUrl);}}>
+    { currentPage + " / " + totalPages}
+    <button disabled={currentPage===totalPages} onClick={() => {onPaginationClick(currentPage+1);}}>
       <i className="fa fa-angle-right fa-2x"/>
     </button>
   </div>
@@ -13,8 +14,8 @@ const CoursePagination = ({prevUrl, nextUrl, onPaginationClick}) => (
 
 // prevUrl and nextUrl may be null, so not required
 CoursePagination.propTypes = {
-  prevUrl: PropTypes.string,
-  nextUrl: PropTypes.string,
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
   onPaginationClick: PropTypes.func.isRequired
 };
 

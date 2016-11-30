@@ -1,8 +1,7 @@
 export default {
-  courses: {
+  categories: {
     isFetching: false,
-    byHash: {},
-    categories: {
+    byId: {
       "2175": {
         children: [
           "Art & Society", "Art History", "Design", "Pop Culture", "Media Studies",
@@ -53,18 +52,27 @@ export default {
         children: [
           "Logistics", "Biomedical Engineering"
         ]
-      },
-    },
-    displayedCategory: {
-      name: '',
+      }
+    }
+  },
+  courses: {
+    isFetching: false,
+    byHash: {}
+  },
+  pagination: {
+    byCategory: {  // 25 results/page
+      isFetching: false,
       count: 0,
-      next: null,
-      prev: null,
+      currentPage: 0,
+      totalPages: 0,
       courses: []
     },
-    displayedCourse: {
-      name: '',
-      hash: ''
+    bySearch: {  // 10 results/page
+      isFetching: false,
+      count: 0,
+      currentPage: 0,
+      totalPages: 0,
+      courses: []
     }
   },
   user: {

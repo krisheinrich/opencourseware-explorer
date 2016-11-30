@@ -1,5 +1,6 @@
-import fetch from 'isomorphic-fetch';
-import fetchAPI, { checkStatus, getJSON } from '../api/fetchAPI';
+import {
+  fetchCategoryCourseListFromAPI, fetchCourseDetailsFromAPI, checkStatus, getJSON
+} from '../api/fetchAPI';
 import * as types from '../constants/actionTypes';
 
 /*
@@ -9,35 +10,24 @@ import * as types from '../constants/actionTypes';
    - Action for error
 */
 
-// Fetch list of course categories/subjects
+// Helpers
 
-function requestCategoryList() {
-  return { type: types.GET_CATEGORY_LIST_REQUEST };
+function getTotalPageCount(courseCount) {
+  return Math.ceil(courseCount/25);
 }
 
-function getCategoryListSuccess(categories) {
-  return {
-    type: types.GET_CATEGORY_LIST_SUCCESS,
-    payload: categories
-  };
-}
-
-function getCategoryListError(error) {
-  return {
-    type: types.GET_CATEGORY_LIST_ERROR,
-    error
-  };
-}
-
-export function loadCategories() {
-  return function (dispatch) {
-    dispatch(requestCategoryList());
-    return fetchAPI('categories')
-      .then(checkStatus)
-      .then(getJSON)
-      .then(json => dispatch(getCategoryListSuccess(json)))
-      .catch(error => dispatch(getCategoryListError(error)));
-  };
+function determinePageNumber(page) {
+  // First page of results always has 'previous' === null
+  if (!page.previous) {
+    return 1;
+  }
+  // Last page of results always has 'next' === null
+  if (!page.next) {
+    return getTotalPageCount(page.count);
+  }
+  // Not first or last means that 'next' contains a page number
+  const nextPageNumber = parseInt(page.next.match(/\d+$/)[0], 10);
+  return (nextPageNumber - 1);
 }
 
 // Fetch paginated list of courses for a particular category/subject
@@ -46,18 +36,15 @@ function requestCategoryCourseList() {
   return { type: types.GET_CATEGORY_COURSE_LIST_REQUEST };
 }
 
-function getCategoryCourseListSuccess(page, categoryId) {
-  // Filter results by language
-  const languageFilter = "English";
-
+function getCategoryCourseListSuccess(page, categoryId, pageNum) {
   return {
     type: types.GET_CATEGORY_COURSE_LIST_SUCCESS,
     id: categoryId,
+    name: page.title,
     count: page.count,
-    next: page.next,
-    prev: page.previous,
-    // Want to filter in API request (paginated lists in UI will not be same length otherwise)
-    payload: page.results.filter(course => course.language.indexOf(languageFilter) > -1)
+    currentPage: pageNum || determinePageNumber(page),
+    totalPages: getTotalPageCount(page.count),
+    payload: page.results
   };
 }
 
@@ -68,10 +55,30 @@ function getCategoryCourseListError(error) {
   };
 }
 
+export function fetchCategoryCourseList(categoryId, page) {
+  return function (dispatch, getState) {
+    if (getState().pagination.byCategory.isFetching) {
+      return Promise.resolve();
+    }
+
+    dispatch(requestCategoryCourseList());
+
+    return fetchCategoryCourseListFromAPI(categoryId, page)
+      .then(checkStatus)
+      .then(getJSON)
+      .then(json => {
+        dispatch(getCategoryCourseListSuccess(json, categoryId, page));
+      })
+      .catch(error => dispatch(getCategoryCourseListError(error)));
+  };
+}
+
+/*
+
 // If fetching initial page of course results
 export function fetchCategoryCourseListFromId(categoryId) {
   return function (dispatch, getState) {
-    if (getState().courses.isFetching) {
+    if (getState().pagination.byCategory.isFetching) {
       return Promise.resolve();
     }
 
@@ -100,6 +107,8 @@ export function fetchCategoryCourseListFromURL(url, categoryId) {
   };
 }
 
+*/
+
 // Fetch more detailed data for a particular course
 
 function requestCourseDetails() {
@@ -124,7 +133,7 @@ export function fetchCourseDetails(hash) {
   return function (dispatch) {
 
     dispatch(requestCourseDetails());
-    return fetchAPI('courses/view/'+hash)
+    return fetchCourseDetailsFromAPI(hash)
       .then(checkStatus)
       .then(getJSON)
       .then(json => dispatch(getCourseDetailsSuccess(json)))

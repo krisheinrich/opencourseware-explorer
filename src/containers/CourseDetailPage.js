@@ -18,9 +18,7 @@ class CourseDetailPage extends Component {
   */
   // Re-renders whenever store is changed by dispatch and props are subsequently updated
   render() {
-    const { store } = this.context;
-
-    if (this.props.isFetching || !store.getState().courses.displayedCourse.name) {
+    if (this.props.isFetching) {
       return <Spinner spinnerName="three-bounce" />;
     } else {
       /* eslint-disable react/no-danger */
@@ -37,7 +35,7 @@ class CourseDetailPage extends Component {
             { this.props.course.provider &&
               <p><span className="course-detail-label">Provider:</span> {this.props.course.provider}</p>
             }
-            <p><span className="course-detail-label">Tags:</span> {this.props.course.categories.slice(1).join(", ")}</p>
+            <p><span className="course-detail-label">Tags:</span> {this.props.course.categories.join(", ")}</p>
           </div>
         </main>
       );
@@ -53,15 +51,11 @@ CourseDetailPage.propTypes = {
   isFetching: PropTypes.bool.isRequired
 };
 
-CourseDetailPage.contextTypes = {
-  store: PropTypes.object.isRequired
-};
-
 // Subscribe component to Redux store updates
 
 function mapStateToProps(state, ownProps) {
   return {
-    course: state.courses.displayedCourse,
+    course: state.courses.byHash[ownProps.params.id] || { categories: []},
     hash: ownProps.params.id,
     isFetching: state.courses.isFetching,
   };

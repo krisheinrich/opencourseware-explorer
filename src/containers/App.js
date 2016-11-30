@@ -1,11 +1,11 @@
-import React, { PropTypes } from 'react';
-import {  Link, IndexLink } from 'react-router';
+import React, { Component, PropTypes } from 'react';
+import { Link, IndexLink } from 'react-router';
+import { connect } from 'react-redux';
 import Spinner from 'react-spinkit';
 
-class App extends React.Component {
-  render() {
-    const { store } = this.context;
+class App extends Component {
 
+  render() {
     return (
       <div>
         <nav>
@@ -16,7 +16,7 @@ class App extends React.Component {
           </ul>
         </nav>
         <br/>
-        { Object.keys(store.getState().courses.categories).length === 0
+        { this.props.isFetching
           ? <Spinner className="center-content" spinnerName="three-bounce" />
           : this.props.children
         }
@@ -26,11 +26,16 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  children: PropTypes.element
+  children: PropTypes.element,
+  isFetching: PropTypes.bool.isRequired
 };
 
-App.contextTypes = {
-  store: PropTypes.object.isRequired
-};
+function mapStateToProps(state) {
+  return {
+    isFetching: state.categories.isFetching
+  };
+}
 
-export default App;
+export default connect(
+  mapStateToProps
+)(App);
