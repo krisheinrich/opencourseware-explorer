@@ -19,7 +19,7 @@ function byCategory(state = initialState.pagination.byCategory, action) {
         count: action.count,
         currentPage: action.currentPage,
         totalPages: action.totalPages,
-        courses: action.payload
+        courseIds: Object.keys(action.byHash)
       });
 
     case GET_CATEGORY_COURSE_LIST_ERROR:
@@ -39,10 +39,11 @@ function bySearch(state = initialState.pagination.bySearch, action) {
     case GET_SEARCH_RESULTS_SUCCESS:
       return objectAssign({}, state, {
         isFetching: false,
+        query: action.query,
         count: action.count,
         currentPage: action.currentPage,
         totalPages: action.totalPages,
-        courses: action.payload
+        courseIds: Object.keys(action.byHash)
       });
 
     case GET_SEARCH_RESULTS_ERROR:

@@ -1,29 +1,34 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actions from '../actions/searchActions';
+import { connect } from 'react-redux';
+import * as searchActions from '../actions/searchActions';
+import * as courseActions from '../actions/courseActions';
+import NumberFormatter from '../utils/numberFormatter';
 
-//import { withRouter } from 'react-router';
-
-import Spinner from 'react-spinkit';
+import SearchBar from '../components/SearchBar';
 import CoursePagination from '../components/CoursePagination';
-import CourseListItem from '../components/CourseListItem';
+import CourseList from '../components/CourseList';
 
 class SearchResultsPage extends Component {
   constructor(props) {
     super(props);
+    this.state = {newQuery: false};
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
     this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
+    this.determineIfSaved = this.determineIfSaved.bind(this);
   }
   componentDidMount() {
-    // Action to get course list hasn't been dispatched if user loads the page directly (vs via <Link />)
-    if (!this.props.count && !this.props.isFetching) {  // || Object.keys(this.props.categories).length === 0
-      this.props.actions.fetchSearchResults(this.props.query);
+    if (!this.props.isFetching) {
+        this.props.searchActions.fetchSearchResults(this.props.query);
     }
   }
-  componentWillReceiveProps() {
-    if (!this.props.count) {  // || Object.keys(this.props.categories).length === 0
-      this.props.actions.fetchSearchResults(this.props.query);
+  componentWillReceiveProps(newProps) {
+    if (newProps.query !== this.props.query) {
+      this.setState({newQuery: true});
+      this.props.searchActions.fetchSearchResults(this.props.query, this.props.currentPage);
+    }
+    if (newProps.isLoading === false) {
+      this.setState({newQuery: false});
     }
   }
   determineIfSaved(hash) {
@@ -31,44 +36,36 @@ class SearchResultsPage extends Component {
   }
 
   handleSaveCourseId(hash) {
-    return () => {
-      this.props.actions.toggleSavedCourse(hash);
-    };
+    return this.props.courseActions.toggleSavedCourse(hash);
   }
 
   handlePaginationClick(pageNum) {
-    this.props.actions.fetchSearchResults(this.props.query, pageNum);
+    //browserHistory.push(`/search/${this.props.query}`);
+    this.props.searchActions.fetchSearchResults(this.props.query, pageNum);
   }
 
   render() {
-    if (!this.props.isFetching) {
-      return <Spinner spinnerName="three-bounce" />;
-    }
-
+    const {query, courses, count, currentPage, totalPages, isFetching} = this.props;
     return (
       <main id="search-results-page">
-        <div>
-          {`Search > ${this.props.query}` }
+        <SearchBar query={query}/>
+          <CoursePagination
+            isFetching={isFetching}
+            onPaginationClick={this.handlePaginationClick}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
+        <div id="result-count">
+          { (count > 0 && !this.state.newQuery) && `${NumberFormatter.format(count)} results for '${query}'` }
         </div>
-        <CoursePagination
-          currentPage={this.props.currentPage}
-          totalPages={this.props.totalPages}
-          onPaginationClick={this.handlePaginationClick}
-        />
-        { this.props.count === 0
+        { !isFetching && count === 0
         ? <p><em>No courses found.</em></p>
-        : <ul className="search-results-list">
-            {this.props.courses.map(({ title, author, linkhash }, index) => (
-              <CourseListItem
-                key={index}
-                hash={linkhash}
-                name={title}
-                author={author}
-                isSaved={this.determineIfSaved(linkhash)}
-                saveCourseId={this.handleSaveCourseId}
-              />
-            ))}
-          </ul>
+        : <CourseList
+            courses={courses}
+            toggleSavedCourse={this.handleSaveCourseId}
+            isSaved={this.determineIfSaved}
+            isLoading={isFetching}
+          />
         }
       </main>
     );
@@ -76,10 +73,12 @@ class SearchResultsPage extends Component {
 }
 
 SearchResultsPage.propTypes = {
-  actions: PropTypes.object.isRequired,
+  searchActions: PropTypes.object.isRequired,
+  courseActions: PropTypes.object.isRequired,
   isFetching: PropTypes.bool.isRequired,
   categories: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
+  //isCached: PropTypes.bool.isRequired,
   courses: PropTypes.array.isRequired,
   count: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
@@ -90,11 +89,14 @@ SearchResultsPage.propTypes = {
 // Subscribe component to Redux store updates
 
 function mapStateToProps(state, ownProps) {
+  //const isCached = state.pagination.bySearch.courseIdsByQueryPage.hasOwnProperty(query) && state.pagination.bySearch.courseIdsByQueryPage[query].hasOwnProperty(currentPage);
   return {
     isFetching: state.pagination.bySearch.isFetching,
     categories: state.categories.byId,
     query: ownProps.params.query,
-    courses: state.pagination.bySearch.courses,
+    //isCached,
+    courses: state.pagination.bySearch.courseIds.map(hash => state.courses.byHash[hash]),
+    //isCached ? state.pagination.bySearch.courseIdsByQueryPage[query][currentPage].map(hash => state.courses.byHash[hash]) : [],
     count: state.pagination.bySearch.count,
     currentPage: state.pagination.bySearch.currentPage,
     totalPages: state.pagination.bySearch.totalPages,
@@ -104,12 +106,12 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    searchActions: bindActionCreators(searchActions, dispatch),
+    courseActions: bindActionCreators(courseActions, dispatch),
   };
 }
 
-export default //withRouter(
-  connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SearchResultsPage);//);
+)(SearchResultsPage);

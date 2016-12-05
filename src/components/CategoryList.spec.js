@@ -29,7 +29,7 @@ function setup() {
 const wrapper = setup();
 
 describe("<CategoryList />", function () {
-  it('displays a <Link /> with the category name and properly formatted course count', function () {
-    expect(wrapper.find('Link').find('.category-name').render().text()).to.equal('Math & Science (1,312,482)');
+  it('displays a <Link /> with the category name', function () {
+    expect(wrapper.find('Link').find('.category-name').render().text()).to.equal('Math & Science');
   });
 });

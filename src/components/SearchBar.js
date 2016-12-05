@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { browserHistory } from 'react-router';
 
 class SearchBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {value: this.props.query || ''};
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -20,12 +20,21 @@ class SearchBar extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Search courses"/>
-        <input type="submit" value="Search" />
+      <form onSubmit={this.handleSubmit} className="search-form">
+        <input type="text" value={this.state.value}
+          onChange={this.handleChange}
+          placeholder="Search for courses"
+        />
+        <button type="submit" className="btn btn-success">
+          <i className="fa fa-search"/>
+        </button>
       </form>
     );
   }
 }
+
+SearchBar.propTypes = {
+  query: PropTypes.string
+};
 
 export default SearchBar;

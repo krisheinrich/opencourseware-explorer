@@ -4,16 +4,12 @@ import SearchBar from './SearchBar';
 
 const HomePage = () => {
   return (
-    <div>
-      <h1>Open Education Classsroom</h1>
-      <h2>Free University-Level Course Materials</h2>
-      <SearchBar/>
-      <h3>Browse Available Courses:</h3>
-      <ul>
-        <li><Link to="/categories">Browse by Subject</Link></li>
-        <li>Search for Course</li>
-      </ul>
-    </div>
+    <main id="home-page">
+      <h1 id="site-title">Open Education Classsroom</h1>
+      <h2 id="tagline">Free University-Level Course Materials</h2>
+      <SearchBar />
+      <h3>...or <Link to="/categories">Browse courses by Subject</Link></h3>
+    </main>
   );
 };
 

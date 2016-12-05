@@ -8,16 +8,14 @@ export default function userReducer(state = initialState.user, action) {
   switch (action.type) {
     case TOGGLE_SAVED_COURSE:
       // add new course ID
-      if (savedCourses.indexOf(action.id) === -1) {
+      if (savedCourses.indexOf(action.hash) === -1) {
         return {
-          ...state,
-          savedCourses: savedCourses.concat(action.id)
+          savedCourses: savedCourses.concat(action.hash)
         };
       // remove existing saved course ID
       } else {
-        const idIndex = savedCourses.indexOf(action.id);
+        const idIndex = savedCourses.indexOf(action.hash);
         return {
-          ...state,
           savedCourses: [
             ...savedCourses.slice(0, idIndex),
             ...savedCourses.slice(idIndex + 1)

@@ -5,70 +5,54 @@ import * as actions from '../actions/courseActions';
 
 import { withRouter } from 'react-router';
 
-import Spinner from 'react-spinkit';
 import CoursePagination from '../components/CoursePagination';
-import CourseListItem from '../components/CourseListItem';
+import CourseList from '../components/CourseList';
 
 class CategoryCoursesPage extends Component {
   constructor(props) {
     super(props);
+    this.determineIfSaved = this.determineIfSaved.bind(this);
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
     this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
   }
   componentDidMount() {
-    // Action to get course list hasn't been dispatched if user loads the page directly (vs via <Link />)
-    //if (!this.props.count && !this.props.isFetching) {  // || Object.keys(this.props.categories).length === 0
     this.props.actions.fetchCategoryCourseList(this.props.categoryId);
-    //}
   }
   componentWillReceiveProps() {
-    /*
-    if (!this.props.isFetching) {  // || Object.keys(this.props.categories).length === 0
+    if (!this.props.isFetching) {
       this.props.actions.fetchCategoryCourseList(this.props.categoryId, this.props.currentPage);
     }
-    */
   }
+
   determineIfSaved(hash) {
     return this.props.savedCourses.indexOf(hash) > -1;
   }
-
   handleSaveCourseId(hash) {
-    return () => {
-      this.props.actions.toggleSavedCourse(hash);
-    };
+    this.props.actions.toggleSavedCourse(hash);
   }
-
   handlePaginationClick(pageNumber) {
     this.props.actions.fetchCategoryCourseList(this.props.categoryId, pageNumber);
   }
 
   render() {
-    if (this.props.isFetching) {
-      return <Spinner spinnerName="three-bounce" />;
-    }
-
+    const {categoryName, currentPage, totalPages, isFetching, count, courses} = this.props;
     return (
       <main id="category-courses-page">
-        <h1>{this.props.categoryName}</h1>
+        <h1>{categoryName}</h1>
         <CoursePagination
-          currentPage={this.props.currentPage}
-          totalPages={this.props.totalPages}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          isFetching={isFetching}
           onPaginationClick={this.handlePaginationClick}
         />
-        { this.props.count === 0
+        { count === 0 && !isFetching
         ? <p><em>No course data found.</em></p>
-        : <ul className="category-course-list">
-            {this.props.courses.map(({ title, author, linkhash }, index) => (
-              <CourseListItem
-                key={index}
-                hash={linkhash}
-                name={title}
-                author={author}
-                isSaved={this.determineIfSaved(linkhash)}
-                saveCourseId={this.handleSaveCourseId}
-              />
-            ))}
-          </ul>
+        : <CourseList
+            courses={courses}
+            toggleSavedCourse={this.handleSaveCourseId}
+            isSaved={this.determineIfSaved}
+            isLoading={isFetching}
+          />
         }
       </main>
     );
@@ -96,7 +80,7 @@ function mapStateToProps(state, ownProps) {
     categories: state.categories.byId,
     categoryId: ownProps.params.id,
     categoryName: state.categories.byId[ownProps.params.id].name,
-    courses: state.pagination.byCategory.courses,
+    courses: state.pagination.byCategory.courseIds.map(hash => state.courses.byHash[hash]),
     count: state.pagination.byCategory.count,
     currentPage: state.pagination.byCategory.currentPage,
     totalPages: state.pagination.byCategory.totalPages,

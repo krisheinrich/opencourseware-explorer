@@ -4,13 +4,14 @@ import React, { PropTypes } from 'react';
 import {render} from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, browserHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
 import routes from './routes';
 import configureStore from './store/configureStore';
 import initialState from './reducers/initialState';
 import { loadCategories } from './actions/categoryActions';
-require('./favicon.ico');  // For Webpack
+// favicon and styles for webpack
+require('./favicon.ico');
 import './styles/styles.scss';
-import { syncHistoryWithStore } from 'react-router-redux';
 
 const store = configureStore(initialState);
 

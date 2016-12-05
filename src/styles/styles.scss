@@ -1,19 +1,28 @@
 /* Variables */
 
+$gray_dark: #4d4d4d;
 $blue: #5bb7db;
+$blue_darker: #1976D2;
+$blue_md: #2196F3;
+$blue_dark: #1565C0;
 $green: #60b044;
+$teal_light: #80CBC4;
 $red: #ff0000;
+$beige: #dcb;
+$beige2: #D7CCC8;
+$soft_white: #EFEBE9;
+$indigo: #3F51B5;
 
 /* Styles */
 
 // GLOBAL
 
 body {
-  z-index: -10;
-  background-color: #dcb;
-  font: 14px 'Helvetica Neue', Ubuntu, Helvetica, Arial, sans-serif;
+  z-index: -3;
+  background-color: $beige2;
+  font: 14px Roboto, Noto, Ubuntu, sans-serif;
   line-height: 1.4em;
-  color: #4d4d4d;
+  color: $gray_dark;
   min-width: 230px;
   max-width: 800px;
   margin: 0 auto;
@@ -23,14 +32,53 @@ body {
   font-weight: 300;
 }
 
+#banner {
+  height: 45vh;
+  background-color: $blue_md;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
 ul {
   list-style: none;
   padding: 0;
 }
 
+// Text
+
+h1 {
+  margin-left: 2.6rem;
+  margin-bottom: 3.6rem;
+}
+
+h1, h2 {
+  font-family: 'Roboto Bold', Noro, Ubuntu, sans-serif;
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+  color: $blue_dark;
+}
+
 // Navigation
 
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 4.4rem;
+  z-index: 3;
+  background: $blue_md;
+}
+
 ul#nav-list {
+  width: 800px;
+  margin: 0 auto;
   display: -webkit-flex;
   display: flex;
   margin-top: 2rem;
@@ -39,26 +87,39 @@ ul#nav-list li {
   margin: 0;
   a {
     padding: 1rem 0.8rem;
+    color: $gray_dark;
     &:hover {
-      background: #d4c3b2;
+      background: darken($blue_md, 8);
     }
     &.active {
       color: #222;
       font-weight: 500;
-      border-bottom: 3px solid lighten(brown, 20);
+      border-bottom: 3px solid $blue_dark;
     }
   }
 }
 
-// Text
-
-h2 {
-	color: $blue;
+// Each page
+main {
+  position: relative;
+  top: 72px;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+// Search Bar
+
+.search-form {
+  margin-top: 0.4rem;
+  width: 100%;
+  display: flex;
+  input[type=text] {
+    padding: 0.4rem 0.6rem;
+    flex: 6 0 0;
+    font-size: 1.2rem;
+  }
+  button[type=submit] {
+    flex: 1 0 0;
+    font-size: 1.2rem;
+  }
 }
 
 // Loading Dots
@@ -70,29 +131,76 @@ div.three-bounce {
 
 // Course lists
 
-ul.search-results-list li, ul.category-course-list li, ul.mySavedCourses li {
-  background: #e8e8e8;
+ul.course-results-list li {
+  background: $soft_white;
   padding: 1.1rem 2.6rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
   line-height: 21px;
   border-bottom: 1px solid #ccc;
   position: relative;
+  transition: color 0.2s;
   a {
+    color: $gray_dark;
     font-size: 17px;
-    font-family: Helvetica;
+    font-family: Helvetica, Ubuntu, sans-serif;
     font-weight: 600;
   }
   i {
-    color: rgba(60,60,60,0.2);
     font-size: 22px;
     position: absolute;
     left: 14px;
-    top: 19px;
-  }
-  i.fa-bookmark {
-    color: rgba(60,60,60,0.8);
+    top: 20px;
+    transition: all 0.2s;
+    &.fa-bookmark-o {
+      color: rgba(60,60,60,0.2);
+    }
+    &.fa-bookmark {
+      color: rgba(60,60,60,0.8);
+    }
+    &:hover {
+      top: 18px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3)
+    }
   }
   &:hover i {
     color: rgba(64,64,64,0.8);
+  }
+}
+
+// Course List Item animations
+/*
+.list-item-trans-enter {
+  opacity: 0.01;
+}
+
+.list-item-trans-enter.list-item-trans-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.list-item-trans-leave {
+  opacity: 1;
+}
+
+.list-item-trans-enter.list-item-trans-enter-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+*/
+// HOME Page
+
+main#home-page {
+  text-align: center;
+  h1#site-title {
+    margin-top: 3rem;
+    margin-left: 0;
+    font-family: 'Roboto Bold';
+  }
+  h2#tagline {
+    position: relative;
+    top: -2rem;
+    color: $teal_light;
+    margin-bottom: 2rem;
   }
 }
 
@@ -103,7 +211,9 @@ ul.category-list {
   li {
     background: #d1dbd1;
     padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     a {
+      color: $gray_dark;
       min-height: 65px;
       display: block;
       display: flex;
@@ -141,60 +251,91 @@ ul.category-list {
   }
 }
 
-// Toggle Subcategory list visibility
-/*
-.slider {
-  max-height: 0;
-  overflow-y: hidden;
-  -webkit-transition: max-height 0.8s;
-	-moz-transition: max-height 0.8s;
-	transition: max-height 0.8s;
-}
-
-.slider.open {
-  max-height: 200px;
-}
-*/
-
 
 // CATEGORY COURSES LIST Page
 
 // Paginated buttons
 
 div.pagination {
-  width: 220px;
-  margin: 0 auto;
-  padding-bottom: 2em;
+  width: 250px;
+  margin: 2.4rem auto;
   display: flex;
   justify-content: space-around;
+  align-items: center;
   button {
+    position: relative;
     cursor: pointer;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 25%;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background-color: $soft_white;
+    border: 0;
+    &:not([disabled]):hover {
+      background-color: darken($soft_white, 6);
+    }
     &:focus {
       outline: none;
       -webkit-box-shadow: none;
       box-shadow: none;
     }
+    &:first-child i {
+      position: relative;
+      left: -2px;
+    }
+    &:last-child i {
+      position: relative;
+      left: 2px;
+    }
   }
+}
+
+// SEARCH RESULTS PAGE
+
+main#search-results-page #result-count {
+  margin: -2.4rem auto 0;
 }
 
 // COURSE DETAILS PAGE
 
 main#course-details-page {
   position: relative;
-  background: #f6f6f6;
-  border: 3px solid #776;
-  border-radius: 4px;
-  padding: 1.1rem 3.2rem;
+  background: $soft_white;
+  margin-top: 3rem;
+  padding: 1.2rem 3.8rem;
+  border-radius: 2px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  i {
+    color: rgba(64,64,64,0.8);
+    position: absolute;
+    transition: all 0.2s;
+    &.fa-share-square {
+      top: 2.3rem;
+      right: 3.15rem;
+      font-size: 23px;
+    }
+    &.fa-bookmark, &.fa-bookmark-o {
+      top: 2.45rem;
+      left: 1.2rem;
+      font-size: 25px;
+    }
+    &.fa-share-square:hover {
+      top: 2.1rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    &.fa-bookmark:hover, &.fa-bookmark-o:hover {
+      top: 2.25rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+  #course-details span.course-detail-label {
+    font-family: 'Roboto Bold', Noro, Ubuntu, sans-serif;
+    font-weight: 700;
+    margin-right: 6px;
+  }
 }
 
-.course-detail-label {
-  font-weight: 700;
-  margin-right: 6px;
-}
 
+/*
 .glyph-anchor {
   float: right;
   margin: 1.1rem 0 0 0.2rem;
@@ -202,7 +343,6 @@ main#course-details-page {
   position: absolute;
   right: 3rem;
   top: 2.5rem;
-  */
   color: #444;
   display: inline-block;
 }
@@ -216,9 +356,10 @@ main#course-details-page {
 
 .glyph-anchor:after {
   font-family: FontAwesome;
-  content: "\f006";
+  content: "\f097";
   display: inline-block;
   margin-left: 22px;
   vertical-align: middle;
-  font-size: 30px;
+  font-size: 23px;
 }
+*/

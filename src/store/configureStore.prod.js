@@ -1,5 +1,6 @@
 import {createStore, compose, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import persistState from 'redux-localstorage';
 import rootReducer from '../reducers';
 
 export default function configureStore(initialState) {
@@ -12,7 +13,8 @@ export default function configureStore(initialState) {
   ];
 
   return createStore(rootReducer, initialState, compose(
-    applyMiddleware(...middlewares)
+    applyMiddleware(...middlewares),
+    persistState(["courses", "user"])
     )
   );
 }

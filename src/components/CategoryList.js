@@ -1,16 +1,13 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import NumberFormatter from '../utils/numberFormatter';
 
-// For each category, render an <li> that can toggle to show its subcategories
-// , onCategoryClick       onClick={event => onCategoryClick(event, id)}
 const CategoryList = ({categories}) => (
   <ul className="category-list">
     {
       Object.keys(categories).map((id, index) =>
         <li key={index}>
           <Link to={"/category/"+id}>
-            <span className="category-name">{categories[id].name} ({NumberFormatter.format(categories[id].count)})</span>
+            <span className="category-name">{categories[id].name}</span>
             <div className="subcategories">
               { categories[id].children.map((text, index) => (
                   <span key={index} style={{display: "inline-block"}}>
@@ -29,7 +26,6 @@ const CategoryList = ({categories}) => (
 
 CategoryList.propTypes = {
   categories: PropTypes.object.isRequired,
-//  onCategoryClick: PropTypes.func.isRequired
 };
 
 export default CategoryList;

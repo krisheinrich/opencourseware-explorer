@@ -21,5 +21,3 @@ export default (
     <Route path="*" component={NotFoundPage}/>
   </Route>
 );
-
-// <Route path="profile" component={UserProfilePage}/> (authenticated)

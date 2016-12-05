@@ -18,18 +18,41 @@ function getTotalPageCount(courseCount) {
 
 function determinePageNumber(page) {
   // First page of results always has 'previous' === null
-  if (!page.previous) {
-    return 1;
-  }
+  if (!page.previous) return 1;
   // Last page of results always has 'next' === null
-  if (!page.next) {
-    return getTotalPageCount(page.count);
-  }
+  if (!page.next) return getTotalPageCount(page.count);
   // Not first or last means that 'next' contains a page number
   const nextPageNumber = parseInt(page.next.match(/\d+$/)[0], 10);
   return (nextPageNumber - 1);
 }
 
+function getCourseDetails(course) {
+  const {linkhash, title, author, description, provider_name, linkurl, categories} = course;
+  return {
+    hash: linkhash,
+    name: title,
+    description,
+    author,
+    provider: provider_name,
+    url: linkurl,
+    categories: categories[0].split("/").slice(1)
+  };
+}
+
+export const storeCoursesByHash = courseList => {
+  let byHash = {};
+  courseList.forEach(({linkhash, title, author, linkurl}) => {
+    byHash[linkhash] = {
+      hash: linkhash,
+      name: title,
+      author,
+      url: linkurl
+    };
+  });
+  return byHash;
+};
+
+// Action creators
 // Fetch paginated list of courses for a particular category/subject
 
 function requestCategoryCourseList() {
@@ -44,7 +67,7 @@ function getCategoryCourseListSuccess(page, categoryId, pageNum) {
     count: page.count,
     currentPage: pageNum || determinePageNumber(page),
     totalPages: getTotalPageCount(page.count),
-    payload: page.results
+    byHash: storeCoursesByHash(page.results)
   };
 }
 
@@ -73,42 +96,6 @@ export function fetchCategoryCourseList(categoryId, page) {
   };
 }
 
-/*
-
-// If fetching initial page of course results
-export function fetchCategoryCourseListFromId(categoryId) {
-  return function (dispatch, getState) {
-    if (getState().pagination.byCategory.isFetching) {
-      return Promise.resolve();
-    }
-
-    dispatch(requestCategoryCourseList());
-
-    return fetchAPI('categories/' + categoryId)
-      .then(checkStatus)
-      .then(getJSON)
-      .then(json => {
-        dispatch(getCategoryCourseListSuccess(json, categoryId));
-      })
-      .catch(error => dispatch(getCategoryCourseListError(error)));
-  };
-}
-
-// If passing a prev/next key for paginated course results
-export function fetchCategoryCourseListFromURL(url, categoryId) {
-  return function (dispatch) {
-
-    dispatch(requestCategoryCourseList());
-    return fetch(url)
-      .then(checkStatus)
-      .then(getJSON)
-      .then(json => dispatch(getCategoryCourseListSuccess(json, categoryId)))
-      .catch(error => dispatch(getCategoryCourseListError(error)));
-  };
-}
-
-*/
-
 // Fetch more detailed data for a particular course
 
 function requestCourseDetails() {
@@ -118,7 +105,7 @@ function requestCourseDetails() {
 function getCourseDetailsSuccess(course) {
   return {
     type: types.GET_COURSE_DETAILS_SUCCESS,
-    payload: course,
+    payload: getCourseDetails(course),
   };
 }
 
@@ -141,9 +128,9 @@ export function fetchCourseDetails(hash) {
   };
 }
 
-export function toggleSavedCourse(id) {
+export function toggleSavedCourse(hash) {
   return {
     type: types.TOGGLE_SAVED_COURSE,
-    id
+    hash
   };
 }

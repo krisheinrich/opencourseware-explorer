@@ -2,39 +2,37 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/courseActions';
-import CourseListItem from '../components/CourseListItem';
+import CourseList from '../components/CourseList';
 
 class ProfilePage extends Component {
 
   constructor(props) {
     super(props);
     this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
+    this.determineIfSaved = this.determineIfSaved.bind(this);
+  }
+
+  determineIfSaved(hash) {
+    return this.props.savedCourseIds.indexOf(hash) > -1;
   }
 
   handleSaveCourseId(hash) {
-    return () => {
-      this.props.actions.toggleSavedCourse(hash);
-    };
+    this.props.actions.toggleSavedCourse(hash);
   }
 
   render() {
-    const {name, email, savedCourses, coursesByHash} = this.props;
+    const {courses} = this.props;
     return (
       <main id="saved-courses-page">
-        <h2>My Courses</h2>
-        {[name, email]}
-        <ul className="mySavedCourses">
-          {savedCourses.map((hash, index) =>
-            <CourseListItem
-              key={index}
-              hash={hash}
-              name={coursesByHash[hash].name}
-              author={coursesByHash[hash].name}
-              isSaved={true}
-              saveCourseId={this.handleSaveCourseId}
-            />
-          )}
-        </ul>
+        <h1>My Courses</h1>
+        { courses.length === 0
+        ? <p><em>{"Courses you bookmark will appear here for easy access."}</em></p>
+        :  <CourseList
+            courses={courses}
+            toggleSavedCourse={this.handleSaveCourseId}
+            isSaved={this.determineIfSaved}
+          />
+        }
       </main>
     );
   }
@@ -42,18 +40,14 @@ class ProfilePage extends Component {
 
 ProfilePage.propTypes = {
   actions: PropTypes.object.isRequired,
-  name: PropTypes.string,
-  email: PropTypes.string.isRequired,
-  savedCourses: PropTypes.array.isRequired,
-  coursesByHash: PropTypes.object.isRequired
+  courses: PropTypes.array.isRequired,
+  savedCourseIds: PropTypes.array.isRequired
 };
 
 function mapStateToProps(state) {
   return {
-    name: state.user.name,
-    email: state.user.email,
-    savedCourses: state.user.savedCourses,
-    coursesByHash: state.courses.byHash
+    savedCourseIds: state.user.savedCourses,
+    courses: state.user.savedCourses.map(hash => (state.courses.byHash[hash]) || {})
   };
 }
 

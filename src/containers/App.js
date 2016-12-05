@@ -8,6 +8,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <div id="banner" />
         <nav>
           <ul id="nav-list">
             <li><IndexLink to="/" activeClassName="active">Home</IndexLink></li>

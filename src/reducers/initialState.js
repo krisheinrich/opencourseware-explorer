@@ -65,20 +65,17 @@ export default {
       count: 0,
       currentPage: 0,
       totalPages: 0,
-      courses: []
+      courseIds: []
     },
     bySearch: {  // 10 results/page
       isFetching: false,
       count: 0,
       currentPage: 0,
       totalPages: 0,
-      courses: []
+      courseIds: []
     }
   },
   user: {
-    name: '',
-    email: '',
-    isAuthenticated: false,
     savedCourses: []
   }
 };

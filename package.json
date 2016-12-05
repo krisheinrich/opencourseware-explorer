@@ -31,13 +31,15 @@
   "dependencies": {
     "isomorphic-fetch": "2.2.1",
     "object-assign": "4.1.0",
-    "react": "15.3.2",
-    "react-dom": "15.3.2",
+    "react": "15.4.1",
+    "react-addons-css-transition-group": "15.4.1",
+    "react-dom": "15.4.1",
     "react-redux": "4.4.5",
     "react-router": "2.8.1",
     "react-router-redux": "4.0.6",
     "react-spinkit": "1.1.11",
     "redux": "3.6.0",
+    "redux-localstorage": "0.4.1",
     "redux-thunk": "2.1.0"
   },
   "devDependencies": {
@@ -80,7 +82,7 @@
     "open": "0.0.5",
     "postcss-loader": "1.0.0",
     "prompt": "1.0.0",
-    "react-addons-test-utils": "15.3.2",
+    "react-addons-test-utils": "15.4.1",
     "redux-immutable-state-invariant": "1.2.4",
     "replace": "0.3.0",
     "rimraf": "2.5.4",

@@ -5,6 +5,7 @@
 import {createStore, compose, applyMiddleware} from 'redux';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import thunkMiddleware from 'redux-thunk';
+import persistState from 'redux-localstorage';
 import rootReducer from '../reducers';
 
 export default function configureStore(initialState) {
@@ -21,6 +22,7 @@ export default function configureStore(initialState) {
 
   const store = createStore(rootReducer, initialState, compose(
     applyMiddleware(...middlewares),
+    persistState(["courses", "user"]),
     window.devToolsExtension ? window.devToolsExtension() : f => f // add support for Redux dev tools
     )
   );

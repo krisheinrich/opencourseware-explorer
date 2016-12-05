@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
-const CourseListItem = ({ hash, name, author, isSaved, saveCourseId }) => (
+const CourseListItem = ({ hash, name, author, isSaved, saveCourse }) => (
   <li>
-    <i className={isSaved ? "fa fa-bookmark" : "fa fa-bookmark-o"} onClick={saveCourseId(hash)}/>
-    <Link to={'/course/'+hash} dangerouslySetInnerHTML={{__html: name}} />
+    <i title="Bookmark course" className={isSaved ? "fa fa-bookmark" : "fa fa-bookmark-o"} onClick={() => saveCourse(hash)}/>
+    <Link to={`/course/${hash}`} dangerouslySetInnerHTML={{__html: name}} />
     <br />
     {author}
   </li>
@@ -15,9 +15,7 @@ CourseListItem.propTypes = {
   hash: PropTypes.string.isRequired,
   author: PropTypes.string.isRequired,
   isSaved: PropTypes.bool.isRequired,
-  saveCourseId: PropTypes.func.isRequired
+  saveCourse: PropTypes.func.isRequired
 };
 
 export default CourseListItem;
-
-//  onClick={this.props.actions.saveCourseId.bind(null, this.props.hash)}
