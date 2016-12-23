@@ -1,4 +1,4 @@
-import { TOGGLE_SAVED_COURSE } from '../constants/actionTypes';
+import { TOGGLE_SAVED_COURSE, CHANGE_SAVED_COURSES_PAGE } from '../constants/actionTypes';
 import initialState from './initialState';
 
 export default function userReducer(state = initialState.user, action) {
@@ -7,21 +7,33 @@ export default function userReducer(state = initialState.user, action) {
 
   switch (action.type) {
     case TOGGLE_SAVED_COURSE:
-      // add new course ID
       if (savedCourses.indexOf(action.hash) === -1) {
+        // add new course ID
+        const newList = savedCourses.concat(action.hash);
         return {
-          savedCourses: savedCourses.concat(action.hash)
+          ...state,
+          savedCourses: newList,
+          totalPages: Math.ceil(newList.length / 10)
         };
-      // remove existing saved course ID
       } else {
-        const idIndex = savedCourses.indexOf(action.hash);
+        // remove existing saved course ID
+        const ind = savedCourses.indexOf(action.hash);
+        const newList = [
+          ...savedCourses.slice(0, ind),
+          ...savedCourses.slice(ind + 1)
+        ];
         return {
-          savedCourses: [
-            ...savedCourses.slice(0, idIndex),
-            ...savedCourses.slice(idIndex + 1)
-          ]
+          ...state,
+          savedCourses: newList,
+          totalPages: Math.ceil(newList.length / 10)
         };
       }
+
+    case CHANGE_SAVED_COURSES_PAGE:
+      return {
+        ...state,
+        currentPage: action.page
+      };
 
     default:
       return state;

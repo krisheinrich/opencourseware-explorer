@@ -76,6 +76,8 @@ export default {
     }
   },
   user: {
+    currentPage: 0,
+    totalPages: 0,
     savedCourses: []
   }
 };
