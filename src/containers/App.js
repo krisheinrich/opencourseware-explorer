@@ -7,8 +7,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <div id="banner" />
+      <div id="full-page">
         <nav>
           <ul id="nav-list">
             <li><IndexLink to="/" activeClassName="active">Home</IndexLink></li>
@@ -16,7 +15,8 @@ class App extends Component {
             <li><Link to="/saved" activeClassName="active">My Courses</Link></li>
           </ul>
         </nav>
-        <br/>
+        <div id="bg-top" />
+        <div id="bg-bottom" />
         { this.props.isFetching
           ? <Spinner className="center-content" spinnerName="three-bounce" />
           : this.props.children
