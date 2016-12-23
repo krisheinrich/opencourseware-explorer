@@ -17,7 +17,11 @@ class CategoriesPage extends Component {
     return (this.props.isFetching)
     ? <Spinner spinnerName="three-bounce" />
     : <main id="categories-page">
-        <h1>Browse Courses By Category</h1>
+        <div className="results-header">
+          <div className="container">
+            <h1>Browse Courses By Category</h1>
+          </div>
+        </div>
         <CategoryList
           categories={this.props.categories}
           //onCategoryClick={this.handleLoadCourses}

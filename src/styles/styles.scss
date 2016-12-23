@@ -5,6 +5,7 @@ $blue: #5bb7db;
 $blue_darker: #1976D2;
 $blue_md: #2196F3;
 $blue_dark: #1565C0;
+$blue_light: #64B5F6;
 $green: #60b044;
 $teal_light: #80CBC4;
 $red: #ff0000;
@@ -17,14 +18,23 @@ $indigo: #3F51B5;
 
 // GLOBAL
 
+// Set rem base size
+html {
+  font-size: 16px;
+}
+
 body {
-  z-index: -3;
-  background-color: $beige2;
-  font: 14px Roboto, Noto, Ubuntu, sans-serif;
-  line-height: 1.4em;
+  margin: 0;
+//  overflow: hidden;
+}
+
+#full-page {
+  display: flex;
+  flex-direction: column;
+  z-index: -1;
+  font-family: Roboto, Noto, 'Hiragino Sans', Ubuntu, sans-serif;
+  line-height: 1.2rem;
   color: $gray_dark;
-  min-width: 230px;
-  max-width: 800px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
@@ -32,14 +42,25 @@ body {
   font-weight: 300;
 }
 
-#banner {
-  height: 45vh;
-  background-color: $blue_md;
+#bg-top {
   position: fixed;
+  height: 300px;
+  z-index: -2;
   top: 0;
   left: 0;
   right: 0;
-  z-index: -1;
+  background-color: $blue_md;
+}
+
+#bg-bottom {
+  position: fixed;
+  z-index: -3;
+  min-height: 100vh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $blue_light;
 }
 
 ul {
@@ -47,31 +68,30 @@ ul {
   padding: 0;
 }
 
-// Text
-
-h1 {
-  margin-left: 2.6rem;
-  margin-bottom: 3.6rem;
-}
-
-h1, h2 {
-  font-family: 'Roboto Bold', Noro, Ubuntu, sans-serif;
-  font-weight: 700;
-}
-
 a {
   text-decoration: none;
   color: $blue_dark;
+}
+
+h1 {
+  margin-left: 2.6rem;
+  margin-bottom: 3rem;
+}
+
+h1, h2 {
+  line-height: 2rem;
+  font-family: 'Roboto Bold', Noro, 'Helvetica Neue', Ubuntu, sans-serif;
+  font-weight: 600;
 }
 
 // Navigation
 
 nav {
   position: fixed;
+  height: 70px;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 4.4rem;
+  right: 0;
   z-index: 3;
   background: $blue_md;
 }
@@ -79,46 +99,43 @@ nav {
 ul#nav-list {
   width: 800px;
   margin: 0 auto;
-  display: -webkit-flex;
   display: flex;
-  margin-top: 2rem;
-}
-ul#nav-list li {
-  margin: 0;
-  a {
-    padding: 1rem 0.8rem;
-    color: $gray_dark;
-    &:hover {
-      background: darken($blue_md, 8);
-    }
-    &.active {
-      color: #222;
-      font-weight: 500;
-      border-bottom: 3px solid $blue_dark;
+  li {
+    margin: 0;
+    a {
+      display: inline-block;
+      padding: 20px;
+      font-size: 15px;
+      line-height: 30px;
+      vertical-align: baseline;
+      color: $gray_dark;
+      &:hover {
+        background: darken($blue_md, 8);
+      }
+      &.active {
+        color: #222;
+        font-weight: 500;
+        box-shadow: 0 -3px 0 0 $blue_dark inset;
+      }
     }
   }
 }
 
-// Each page
+// Each page container
 main {
-  position: relative;
-  top: 72px;
+  position: absolute;
+  top: 88px;
+  left: 50%;
+  margin-left: -400px;
+  width: 800px;
 }
 
-// Search Bar
-
-.search-form {
-  margin-top: 0.4rem;
-  width: 100%;
-  display: flex;
-  input[type=text] {
-    padding: 0.4rem 0.6rem;
-    flex: 6 0 0;
-    font-size: 1.2rem;
-  }
-  button[type=submit] {
-    flex: 1 0 0;
-    font-size: 1.2rem;
+@media screen and (max-width: 800px) {
+  main {
+    width: 100vw;
+    margin-left: 0;
+    left: 0;
+    right: 0;
   }
 }
 
@@ -129,20 +146,124 @@ div.three-bounce {
   text-align: center;
 }
 
-// Course lists
+/* Course List Components */
+
+// Results header
+
+div.results-header {
+  background-color: $blue_md;
+  height: 144px;
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  z-index: 2;
+  .container {
+    width: 800px;
+    margin: 0 auto;
+  }
+  & > h1 {
+    position: relative;
+    top: 8px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  div.results-header {
+    padding: 0;
+    margin-left: 0;
+  }
+  div.results-header .container {
+    width: 100%;
+  }
+}
+
+// Search Bar
+
+.search-form {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  margin-top: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  input[type=text] {
+    padding: 0.4rem 0.6rem;
+    flex: 6 0 0;
+    font-size: 20px;
+  }
+  button[type=submit] {
+    flex: 1 0 0;
+    font-size: 20px;
+  }
+}
+
+// count
+
+div#result-count {
+  position: absolute;
+  bottom: 0;
+}
+
+// Paginated buttons
+
+div.pagination {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  width: 250px;
+  margin-left: -125px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  button {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: $soft_white;
+    border: 0;
+    &:not([disabled]):hover {
+      background-color: darken($soft_white, 6);
+    }
+    &:focus {
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+    &:first-child i {
+      position: relative;
+      left: -2px;
+    }
+    &:last-child i {
+      position: relative;
+      left: 2px;
+    }
+  }
+}
+
+// Course Lists
+
+ ul.course-results-list {
+   position: absolute;
+   top: 117px;
+   left: 0;
+   right: 0;
+ }
 
 ul.course-results-list li {
+  position: relative;
   background: $soft_white;
   padding: 1.1rem 2.6rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 7px 1px rgba(0,0,0,0.3);
   line-height: 21px;
   border-bottom: 1px solid #ccc;
-  position: relative;
   transition: color 0.2s;
   a {
     color: $gray_dark;
-    font-size: 17px;
-    font-family: Helvetica, Ubuntu, sans-serif;
+    font-size: 1.05rem;
+    font-family: 'Helvetica Neue', Ubuntu, Helvetica, sans-serif;
     font-weight: 600;
   }
   i {
@@ -169,20 +290,20 @@ ul.course-results-list li {
 
 // Course List Item animations
 /*
-.list-item-trans-enter {
+.fade-up-enter {
   opacity: 0.01;
 }
 
-.list-item-trans-enter.list-item-trans-enter-active {
+.fade-up-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
 
-.list-item-trans-leave {
+.fade-up-leave {
   opacity: 1;
 }
 
-.list-item-trans-enter.list-item-trans-enter-active {
+.fade-up-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
 }
@@ -192,60 +313,78 @@ ul.course-results-list li {
 main#home-page {
   text-align: center;
   h1#site-title {
-    margin-top: 3rem;
+    position: relative;
+    top: 24px;
     margin-left: 0;
-    font-family: 'Roboto Bold';
+    font-weight: 700;
+    font-family: 'Gill Sans';
   }
   h2#tagline {
     position: relative;
-    top: -2rem;
+    top: -18px;
     color: $teal_light;
-    margin-bottom: 2rem;
+  }
+  .search-form {
+    top: 3px;
+  }
+  h3#browse-link {
+    position: relative;
+    top: 14px;
   }
 }
 
 // CATEGORY LIST Page
 
-ul.category-list {
-  margin-top: 3em;
-  li {
-    background: #d1dbd1;
-    padding: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    a {
-      color: $gray_dark;
-      min-height: 65px;
-      display: block;
-      display: flex;
-      margin: 0;
-      padding: 0.5em 3em 0.5em 2.4em;
-      justify-content: space-between;
-      align-items: center;
-      &:hover {
-        background: #c1cbc1;
+main#categories-page {
+  h1 {
+    position: relative;
+    top: 1.8rem;
+  }
+  ul.category-list {
+    position: absolute;
+    min-height: 30vh;
+    top: 114px;
+    box-shadow: 0 2px 7px 1px rgba(0,0,0,0.3);
+    li {
+      position: relative;
+      background: #d1dbd1;
+      padding: 0;
+      box-shadow: 0 1px rgba(100,100,100,0.3) inset;
+      a {
+        color: $gray_dark;
+        min-height: 65px;
+        display: block;
+        display: flex;
+        margin: 0;
+        padding: 0.5em 3em 0.5em 2.4em;
+        justify-content: space-between;
+        align-items: center;
+        &:hover {
+          background: #c1cbc1;
+          span.category-name {
+            font-weight: 500;
+          }
+          div.subcategories {
+            color: #222;
+          }
+        }
+        & > span {
+          flex-grow: 1;
+          margin: auto 10px;
+        }
         span.category-name {
-          font-weight: 500;
+          line-height: 1.4em;
+          font-size: 1.1rem;
         }
         div.subcategories {
-          color: #222;
+          color: inherit;
+          padding: 0;
+          width: 50%;
+          line-height: 1.2rem;
+          font-size: 0.8rem;
+          text-align: center;
+          vertical-align: middle;
         }
-      }
-      & > span {
-        flex-grow: 1;
-        margin: auto 10px;
-      }
-      span.category-name {
-        line-height: 1.4em;
-        font-size: 1.1rem;
-      }
-      div.subcategories {
-        color: inherit;
-        padding: 0;
-        width: 50%;
-        line-height: 1.2rem;
-        font-size: 0.8rem;
-        text-align: center;
-        vertical-align: middle;
       }
     }
   }
@@ -254,83 +393,72 @@ ul.category-list {
 
 // CATEGORY COURSES LIST Page
 
-// Paginated buttons
-
-div.pagination {
-  width: 250px;
-  margin: 2.4rem auto;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  button {
-    position: relative;
-    cursor: pointer;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 50%;
-    background-color: $soft_white;
-    border: 0;
-    &:not([disabled]):hover {
-      background-color: darken($soft_white, 6);
-    }
-    &:focus {
-      outline: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-    &:first-child i {
-      position: relative;
-      left: -2px;
-    }
-    &:last-child i {
-      position: relative;
-      left: 2px;
-    }
-  }
-}
 
 // SEARCH RESULTS PAGE
 
-main#search-results-page #result-count {
-  margin: -2.4rem auto 0;
-}
 
 // COURSE DETAILS PAGE
 
 main#course-details-page {
-  position: relative;
+  top: 8rem;
   background: $soft_white;
-  margin-top: 3rem;
   padding: 1.2rem 3.8rem;
   border-radius: 2px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px 1px rgba(0,0,0,0.3);
+  h2 {
+    font-size: 1.65em;
+    font-family: 'Roboto Bold', 'Helvetica Neue', Noro, Ubuntu, sans-serif;
+  }
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-family: 'Roboto Bold', 'Helvetica Neue', Noro, Ubuntu, sans-serif;
+  }
   i {
     color: rgba(64,64,64,0.8);
     position: absolute;
-    transition: all 0.2s;
+    transition: all 0.15s;
     &.fa-share-square {
-      top: 2.3rem;
+      top: 2.9rem;
       right: 3.15rem;
-      font-size: 23px;
+      font-size: 26px;
     }
     &.fa-bookmark, &.fa-bookmark-o {
-      top: 2.45rem;
-      left: 1.2rem;
-      font-size: 25px;
+      top: 2.9rem;
+      left: 1.35rem;
+      font-size: 1.8rem;
     }
     &.fa-share-square:hover {
-      top: 2.1rem;
+      top: 2.6rem;
       text-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
     &.fa-bookmark:hover, &.fa-bookmark-o:hover {
-      top: 2.25rem;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      top: 2.6rem;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
   }
-  #course-details span.course-detail-label {
-    font-family: 'Roboto Bold', Noro, Ubuntu, sans-serif;
-    font-weight: 700;
-    margin-right: 6px;
+  #course-details {
+    font-family: 'Roboto', Noro, 'Helvetica Neue', Noro, Ubuntu, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.35em;
+    span.course-detail-label {
+      font-family: 'Roboto Bold', Noro, 'Helvetica Neue', Ubuntu, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+  }
+}
+
+// MY COURSES pageNum
+
+main#saved-courses-page {
+  p {
+    position: absolute;
+    top: 7rem;
+    left: 1.4rem;
+    z-index: 2;
   }
 }
 

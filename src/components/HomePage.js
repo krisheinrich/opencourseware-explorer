@@ -5,10 +5,10 @@ import SearchBar from './SearchBar';
 const HomePage = () => {
   return (
     <main id="home-page">
-      <h1 id="site-title">Open Education Classsroom</h1>
+      <h1 id="site-title">Open Education Classroom</h1>
       <h2 id="tagline">Free University-Level Course Materials</h2>
       <SearchBar />
-      <h3>...or <Link to="/categories">Browse courses by Subject</Link></h3>
+      <h3 id="browse-link">...or <Link to="/categories">Browse courses by Subject</Link></h3>
     </main>
   );
 };
