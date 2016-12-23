@@ -11,6 +11,7 @@ import CourseList from '../components/CourseList';
 class CategoryCoursesPage extends Component {
   constructor(props) {
     super(props);
+    this.state = {isNewCategory: true};
     this.determineIfSaved = this.determineIfSaved.bind(this);
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
     this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
@@ -18,12 +19,16 @@ class CategoryCoursesPage extends Component {
   componentDidMount() {
     this.props.actions.fetchCategoryCourseList(this.props.categoryId);
   }
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
     if (!this.props.isFetching) {
       this.props.actions.fetchCategoryCourseList(this.props.categoryId, this.props.currentPage);
     }
+    if (nextProps.categoryId !== this.props.categoryId) {
+      this.setState({isNewCategory: true});
+    } else if (nextProps.isFetching === false) {
+      this.setState({isNewCategory: false});
+    }
   }
-
   determineIfSaved(hash) {
     return this.props.savedCourses.indexOf(hash) > -1;
   }
@@ -38,20 +43,25 @@ class CategoryCoursesPage extends Component {
     const {categoryName, currentPage, totalPages, isFetching, count, courses} = this.props;
     return (
       <main id="category-courses-page">
-        <h1>{categoryName}</h1>
-        <CoursePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          isFetching={isFetching}
-          onPaginationClick={this.handlePaginationClick}
-        />
-        { count === 0 && !isFetching
+        <div className="results-header">
+          <div className="container">
+            <h1>{categoryName}</h1>
+            <CoursePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              isFetching={isFetching}
+              isFetchingNewQuery={this.state.isNewCategory}
+              onPaginationClick={this.handlePaginationClick}
+            />
+          </div>
+        </div>
+        { count === 0
         ? <p><em>No course data found.</em></p>
         : <CourseList
             courses={courses}
             toggleSavedCourse={this.handleSaveCourseId}
             isSaved={this.determineIfSaved}
-            isLoading={isFetching}
+            isNewResult={this.state.isNewCategory}
           />
         }
       </main>

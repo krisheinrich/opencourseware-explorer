@@ -12,7 +12,7 @@ import CourseList from '../components/CourseList';
 class SearchResultsPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {newQuery: false};
+    this.state = {isFetchingNewQuery: true};
     this.handlePaginationClick = this.handlePaginationClick.bind(this);
     this.handleSaveCourseId = this.handleSaveCourseId.bind(this);
     this.determineIfSaved = this.determineIfSaved.bind(this);
@@ -22,13 +22,12 @@ class SearchResultsPage extends Component {
         this.props.searchActions.fetchSearchResults(this.props.query);
     }
   }
-  componentWillReceiveProps(newProps) {
-    if (newProps.query !== this.props.query) {
-      this.setState({newQuery: true});
-      this.props.searchActions.fetchSearchResults(this.props.query, this.props.currentPage);
-    }
-    if (newProps.isLoading === false) {
-      this.setState({newQuery: false});
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.query !== this.props.query) {
+      this.setState({isFetchingNewQuery: true});
+      this.props.searchActions.fetchSearchResults(nextProps.query);
+    } else if (nextProps.isFetching === false) {
+      this.setState({isFetchingNewQuery: false});
     }
   }
   determineIfSaved(hash) {
@@ -48,15 +47,22 @@ class SearchResultsPage extends Component {
     const {query, courses, count, currentPage, totalPages, isFetching} = this.props;
     return (
       <main id="search-results-page">
-        <SearchBar query={query}/>
-          <CoursePagination
-            isFetching={isFetching}
-            onPaginationClick={this.handlePaginationClick}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
-        <div id="result-count">
-          { (count > 0 && !this.state.newQuery) && `${NumberFormatter.format(count)} results for '${query}'` }
+        <div className="results-header">
+          <div className="container">
+            <SearchBar query={query}/>
+            <CoursePagination
+              isFetching={isFetching}
+              isFetchingNewQuery={this.state.isFetchingNewQuery}
+              onPaginationClick={this.handlePaginationClick}
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+            <div id="result-count">
+              { (count > 0 && !this.state.isFetchingNewQuery) &&
+                `${NumberFormatter.format(count)} results for '${query}'`
+              }
+            </div>
+          </div>
         </div>
         { !isFetching && count === 0
         ? <p><em>No courses found.</em></p>
@@ -64,7 +70,7 @@ class SearchResultsPage extends Component {
             courses={courses}
             toggleSavedCourse={this.handleSaveCourseId}
             isSaved={this.determineIfSaved}
-            isLoading={isFetching}
+            isNewResult={this.state.isFetchingNewQuery}
           />
         }
       </main>
