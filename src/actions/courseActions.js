@@ -128,9 +128,26 @@ export function fetchCourseDetails(hash) {
   };
 }
 
+// Saved Course Actions
+
 export function toggleSavedCourse(hash) {
   return {
     type: types.TOGGLE_SAVED_COURSE,
     hash
   };
+}
+
+export function changeSavedCoursesPage(pageNum) {
+  return {
+    type: types.CHANGE_SAVED_COURSES_PAGE,
+    page: pageNum
+  };
+}
+
+// Selector for saved courses
+
+export function getSavedCoursesByPage(state, page) {
+  return state.user.savedCourses
+    .filter((hash, index) => (index >= (page-1)*10 && index < page*10))
+    .map(hash => (state.courses.byHash[hash]) || {});
 }
